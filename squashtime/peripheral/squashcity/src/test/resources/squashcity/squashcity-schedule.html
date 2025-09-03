@@ -1,0 +1,1728 @@
+<!doctype html>
+<html class="html animate framework">
+
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+    <title>Reservations -- BR</title>
+    <link rel="manifest" href="/pwa.manifest.json" />
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png" />
+    <meta name="og:image"
+          content="https://squashcity.baanreserveren.nl/images/logos/clubs/7.jpg?v=2_9_478_1751979041" />
+    <meta name="theme-color" content="#1378a1" />
+    <link rel="stylesheet" href="/css/all.css?v=2_9_478_1751979041" />
+    <link rel="stylesheet" href="/css/cached/club_7.css?v=2_9_478_1751979041" />
+    <meta name="description" content="Make your reservation here with CourtReservation.net" />
+    <meta name="robots" content="noindex" />
+    <style>
+        #datepicker td#cal_2025_8_31 {
+            background-color: #333;
+            font-weight: bold;
+        }
+    </style>
+    <script>
+        if ( location != parent.location ) parent.location = location;
+    </script>
+    <script>
+        var ASSET_VERSION = '2_9_478_1751979041';
+var MOBILE_VERSION = false;
+var TODAY = "2025-08-31";
+var MEMBER_SEARCH_LENGTH = 2;
+var INPUT_DATE_FORMAT = "d-m-y";
+window.t = {
+	Q_SURE: "Are you absolutely sure?",
+	N_PLAYERS_FOUND: "__N__ resultaten",
+	MEMBER_SEARCH_PLACEHOLDER: "Search...",
+	PLAYER_IS_NOT_A_MEMBER: "Player is not a member",
+};
+    </script>
+    <script src="/js/all.js?v=2_9_478_1751979041"></script>
+</head>
+
+<body class=" reservations-schedule grp-player ms-1236">
+
+<div id="ajax_loading">
+    <div>
+        <table cellpadding="0" cellspacing="5">
+            <tr>
+                <td>
+                    <img src="/images/spinner.gif" />
+                </td>
+                <td nowrap>L O A D I N G . . .</td>
+                <td>
+                    <img src="/images/spinner.gif" />
+                </td>
+            </tr>
+        </table>
+    </div>
+</div>
+
+<div id="frame">
+    <div id="header_row_1" class="club_dark right">
+        <a href="/user/account" class="profile-link">
+            <img src="/images/icons/avatar-white.png" class="profile-avatar" />
+            <span class="user-name">Emile Steenkamp</span>
+        </a>
+        | <span class="user-role">NO MEMBERSHIP</span>
+    </div>
+
+    <div id="header_row_2">
+        <div id="upper_row_club_logo">
+            <a href="/">
+                <img class="clublogo" src="/images/logos/clubs/7.jpg?v=2_9_478_1751979041" />
+            </a>
+        </div>
+        <div id="upper_row_club_banner" class="c">
+            &nbsp;
+        </div>
+        <div id="upper_row_club_address">
+            <ul>
+                <li>Ketelmakerstraat 6</li>
+                <li>1013 DE AMSTERDAM</li>
+                <li>020-6267883</li>
+                <li><a href="mailto:receptie@squashcity.com">receptie@squashcity.com</a></li>
+            </ul>
+        </div>
+    </div>
+
+    <div id="header_row_3" class="club_light c"></div>
+
+    <div id="tr_content">
+        <!-- menu -->
+        <div id="td_leftframe_cal_etc" class="club_light">
+            <div class="club_light" id="left_frame_sticky">
+                <div id="main-menu-container">
+                    <ul id="main-menu">
+                        <li class=""><a href="/reservations" class="">Reservations</a></li>
+                        <li class=""><a href="/waitinglist" class="">Waiting list</a></li>
+                        <li class=""><a href="/auth/resrules" class="">Reservation rules</a></li>
+                        <li class=""><a href="/complaints/new" class="ajaxlink">Feedback</a></li>
+                        <li class=""><a href="/user/account" class="">My account</a></li>
+                        <li class=""><a href="/auth/logout" class="">Logout</a></li>
+                    </ul>
+                </div>
+
+                <script>
+                    activateMenuItem($$('#main-menu a[href]'), '/reservations/2025-09-01/sport/15');
+                </script>
+                <br />
+                <div id="left_frame_sticky2">
+                    <div class="to-top"><button onclick="window.scrollTo(0, 0); this.blur()">^ TOP ^</button></div>
+                    <table id="tbl_calendar">
+                        <thead>
+                        <tr class="nav_month_year_nav">
+                            <td class="month prev"><a
+                                    href="javascript:g_m--;if(1>g_m){g_m=12;g_y--;}doCreateCalendar();">&lsaquo;</a>
+                            </td>
+                            <td colspan="5" id="calendar_date_title"></td>
+                            <td class="month next"><a
+                                    href="javascript:g_m++;if(12<g_m){g_m=1;g_y++;}doCreateCalendar();">&rsaquo;</a>
+                            </td>
+                        </tr>
+                        <tr class="weekdays">
+                            <td>Mo</td>
+                            <td>Tu</td>
+                            <td>We</td>
+                            <td>Th</td>
+                            <td>Fr</td>
+                            <td>Sa</td>
+                            <td>Su</td>
+                        </tr>
+                        </thead>
+                        <tbody id="tbody_calendar"></tbody>
+                    </table>
+
+
+
+                    <script>
+                        $$('.i_spbn').on('search', function(e) {
+e.preventDefault();
+if (!this.value) return;
+
+var url = this.data('url');
+url += 'reference=' + encodeURIComponent(this.value) + '&date=' + (window.szCurrentDate || '');
+
+this.data('href', url);
+this.ov();
+});
+                    </script>
+                </div>
+            </div>
+        </div>
+
+        <div class="main-page-content-td">
+
+
+
+            <div class="main-page-content">
+                <script src="/js/matrix.js?v=2_9_478_1751979041"></script>
+                <script>
+                    window.t['CLICK_ON_RESERVATION_OR_FREE_TARGET'] = "Click on the target reservation\/court\/activity";
+window.t['CLICK_ON_FREE_TARGET__CTRL_FOR_MULTIPLE'] = "Click on a free target slot. Use CTRL to select multiple slots";
+window.t['Q_MOVE_RESERVATION'] = "Move reservation?";
+window.t['Q_SURE_TO_MOVE_RESERVATION'] = "Are you sure you want to move this reservation?";
+window.t['Q_SWITCH_RESERVATIONS'] = "Switch reservations?";
+window.t['Q_SURE_TO_SWITCH_RESERVATIONS'] = "Are you sure you want to switch these reservations?";
+window.t['COPY_RESERVATION'] = "Copy";
+window.t['Q_SURE_TO_COPY_RESERVATION'] = "Are you sure you want to copy this reservation?";
+window.t['COPY_WITH_EMAIL'] = "Copy with e-mail";
+window.t['COPY_WITHOUT_EMAIL'] = "Copy without e-mail";
+window.t['Q_HOW_MANY_WEEKS_AFTER_THIS_ONE'] = "How many WEEKS, AFTER this one?";
+window.t['RETURN'] = "Return";
+window.t['MOVE_WITH_EMAIL'] = "Move (with mail)";
+window.t['MOVE_WITHOUT_EMAIL'] = "Move (no mail)";
+window.t['SWITCH_WITH_EMAIL'] = "Switch (with mail)";
+window.t['SWITCH_WITHOUT_EMAIL'] = "Switch (no mail)";
+window.t['HISTORY_CANCEL_PROMPT_TITLE'] = "Cancel how?";
+window.t['HISTORY_CANCEL_PROMPT_TEXT'] = "I would normally send out confirmation e-mails. Is that okay?";
+window.t['CANCEL_WITH_EMAIL'] = "Cancel with e-mail";
+window.t['CANCEL_WITHOUT_EMAIL'] = "Cancel without e-mail";
+                </script>
+                <script>
+                    window.szCurrentDate = '2025-09-01';
+window.arrCurrentDate = [2025,9,1];
+window.g_y = 2025;
+window.g_m = 9;
+window.g_months = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+window.iCurrentSport = 15;
+window.iCurrentSlotsize = 0;
+window.bGoLocation = false;
+                </script>
+
+                <style>
+                    /* Widen mootooltip */
+                    #mootooltip {
+                        max-width: 600px;
+                    }
+                </style>
+
+
+                <!-- FREE, NORMAL SLOT -->
+                <ul id="rc_popup_free" class="rc_popup" hidden>
+                    <li>
+                        <a style="background-image:url(/images/icons/add.png)"
+                           onclick="rc.makeReservation()">Reserve</a>
+                    </li>
+                </ul>
+
+                <!-- APPENDABLE SLOT -->
+                <ul id="rc_popup_appendable" class="rc_popup" hidden>
+                    <li>
+                        <a style="background-image:url(/images/icons/add.png)"
+                           onclick="rc.appendToReservation()">Reserve</a>
+                    </li>
+                </ul>
+
+                <!-- TAKEN, NORMAL SLOT -->
+                <ul id="rc_popup_taken" class="rc_popup" hidden>
+                    <li>
+                        <a style="background-image:url(/images/icons/information.png)"
+                           onclick="rc.reservationInfo()">Open reservation</a>
+                    </li>
+                    <li class="break"></li>
+                    <li>
+                        <a style="background-image:url(/images/icons/cancel.png)"
+                           onclick="rc.cancelReservation()">Cancel</a>
+                    </li>
+                </ul>
+
+                <!-- FREE, CLASS RESOURCE SLOT -->
+                <ul id="rc_popup_class" class="rc_popup" hidden>
+                    <li>
+                        <a style="background-image:url(/images/icons/add.png)"
+                           onclick="rc.makeClassReservation()">Reserve</a>
+                    </li>
+                </ul>
+
+                <!-- SELF, CLASS RESOURCE SLOT -->
+                <ul id="rc_popup_classself" class="rc_popup" hidden>
+                    <li>
+                        <a style="background-image:url(/images/icons/add.png)"
+                           onclick="rc.makeClassReservation()">Reserve</a>
+                    </li>
+                    <li>
+                        <a style="background-image:url(/images/icons/information.png)"
+                           onclick="rc.classInfo()">Information</a>
+                    </li>
+                    <li>
+                        <a style="background-image:url(/images/icons/cancel.png)"
+                           onclick="rc.cancelClass()">Cancel</a>
+                    </li>
+                </ul>
+
+                <div class="mpc-sticky-wrapper left">
+                    <div class="mpc-sticky matrix-nav">
+                        <a href class="matrix-date-nav" data-offset="-1">&lsaquo;</a>
+
+                        <h1 class="h" title="(back) to today"
+                            onclick="loadMatrix('2025-08-31', window.iCurrentSport, window.iCurrentSlotsize)"
+                            id="matrix_date_title">Mon 01-09-2025</h1>
+
+                        <a href class="matrix-date-nav" data-offset="+1">&rsaquo;</a>
+
+                        <select id="matrix-sport">
+                            <optgroup label="SPORT"><option value="sport/15" selected="selected">Squash</option></optgroup><optgroup label="Overzicht"><option value="slotsize/15">All courts</option></optgroup>
+                        </select>
+
+
+
+
+                        <a class="button3" href="/user/future">Future reservations</a>
+
+
+                    </div>
+                </div>
+
+                <div id="matrix_div" style="padding-top: 81px">
+                    <table unselectable id="tbl_matrix" class="matrix-container" data-sport="15">
+                        <tr>
+                            <td class="matrix-column">
+                                <table unselectable class="matrix">
+                                    <thead class="matrix-header">
+                                    <tr class="matrix-name-row">
+                                        <th class="matrix-timeslot header-name empty"></th>
+                                        <th class="header-name  r-51 s-15"
+                                            tooltip="[T0] Baan 1:::Id 51&lt;br /&gt;Sport 15&lt;br /&gt;Guests Y&lt;br /&gt;Open set `Dal 1-5`&lt;br /&gt;Open 07:15 - 23:00&lt;br /&gt;Peaks 17:45, 22:00">
+                                            Baan 1<div class="matrix-header-force-width"></div>
+                                        </th>
+                                        <th class="header-name  r-52 s-15"
+                                            tooltip="[T0] Baan 2:::Id 52&lt;br /&gt;Sport 15&lt;br /&gt;Guests Y&lt;br /&gt;Open set `Dal 1-5`&lt;br /&gt;Open 07:15 - 23:00&lt;br /&gt;Peaks 17:45, 22:00">
+                                            Baan 2<div class="matrix-header-force-width"></div>
+                                        </th>
+                                        <th class="header-name  r-53 s-15"
+                                            tooltip="[T0] Baan 3:::Id 53&lt;br /&gt;Sport 15&lt;br /&gt;Guests Y&lt;br /&gt;Open set `Dal 1-5`&lt;br /&gt;Open 07:15 - 23:00&lt;br /&gt;Peaks 17:45, 22:00">
+                                            Baan 3<div class="matrix-header-force-width"></div>
+                                        </th>
+                                        <th class="header-name  r-54 s-15"
+                                            tooltip="[T0] Baan 4:::Id 54&lt;br /&gt;Sport 15&lt;br /&gt;Guests Y&lt;br /&gt;Open set `Dal 1-5`&lt;br /&gt;Open 07:15 - 23:00&lt;br /&gt;Peaks 17:45, 22:00">
+                                            Baan 4<div class="matrix-header-force-width"></div>
+                                        </th>
+                                        <th class="header-name  r-55 s-15"
+                                            tooltip="[T0] Baan 5:::Id 55&lt;br /&gt;Sport 15&lt;br /&gt;Guests Y&lt;br /&gt;Open set `Dal 1-5`&lt;br /&gt;Open 07:15 - 23:00&lt;br /&gt;Peaks 17:45, 22:00">
+                                            Baan 5<div class="matrix-header-force-width"></div>
+                                        </th>
+                                        <th class="header-name  r-56 s-15"
+                                            tooltip="[T0] Baan 6:::Id 56&lt;br /&gt;Sport 15&lt;br /&gt;Guests Y&lt;br /&gt;Open set `Dal 5-10`&lt;br /&gt;Open 07:45 - 22:45&lt;br /&gt;Peaks 17:30, 22:00">
+                                            Baan 6<div class="matrix-header-force-width"></div>
+                                        </th>
+                                        <th class="header-name  r-57 s-15"
+                                            tooltip="[T0] Baan 7:::Id 57&lt;br /&gt;Sport 15&lt;br /&gt;Guests Y&lt;br /&gt;Open set `Dal 5-10`&lt;br /&gt;Open 07:45 - 22:45&lt;br /&gt;Peaks 17:30, 22:00">
+                                            Baan 7<div class="matrix-header-force-width"></div>
+                                        </th>
+                                        <th class="header-name  r-58 s-15"
+                                            tooltip="[T0] Baan 8:::Id 58&lt;br /&gt;Sport 15&lt;br /&gt;Guests Y&lt;br /&gt;Open set `Dal 5-10`&lt;br /&gt;Open 07:45 - 22:45&lt;br /&gt;Peaks 17:30, 22:00">
+                                            Baan 8<div class="matrix-header-force-width"></div>
+                                        </th>
+                                        <th class="header-name  r-59 s-15"
+                                            tooltip="[T0] Baan 9:::Id 59&lt;br /&gt;Sport 15&lt;br /&gt;Guests Y&lt;br /&gt;Open set `Dal 5-10`&lt;br /&gt;Open 07:45 - 22:45&lt;br /&gt;Peaks 17:30, 22:00">
+                                            Baan 9<div class="matrix-header-force-width"></div>
+                                        </th>
+                                        <th class="header-name  r-60 s-15"
+                                            tooltip="[T0] Baan 10:::Id 60&lt;br /&gt;Sport 15&lt;br /&gt;Guests Y&lt;br /&gt;Open set `Dal 5-10`&lt;br /&gt;Open 07:45 - 22:45&lt;br /&gt;Peaks 17:30, 22:00">
+                                            Baan 10<div class="matrix-header-force-width"></div>
+                                        </th>
+                                        <th class="header-name  r-61 s-15"
+                                            tooltip="[T0] Baan 11:::Id 61&lt;br /&gt;Sport 15&lt;br /&gt;Guests Y&lt;br /&gt;Open set `Dal 11-13`&lt;br /&gt;Open 07:30 - 23:15&lt;br /&gt;Peaks 17:15, 22:00">
+                                            Baan 11<div class="matrix-header-force-width"></div>
+                                        </th>
+                                        <th class="header-name  r-62 s-15"
+                                            tooltip="[T0] Baan 12:::Id 62&lt;br /&gt;Sport 15&lt;br /&gt;Guests Y&lt;br /&gt;Open set `Dal 11-13`&lt;br /&gt;Open 07:30 - 23:15&lt;br /&gt;Peaks 17:15, 22:00">
+                                            Baan 12<div class="matrix-header-force-width"></div>
+                                        </th>
+                                        <th class="header-name  r-63 s-15"
+                                            tooltip="[T0] Baan 13:::Id 63&lt;br /&gt;Sport 15&lt;br /&gt;Guests Y&lt;br /&gt;Open set `Dal 11-13`&lt;br /&gt;Open 07:30 - 23:15&lt;br /&gt;Peaks 17:15, 22:00">
+                                            Baan 13<div class="matrix-header-force-width"></div>
+                                        </th>
+                                    </tr>
+                                    </thead>
+                                    <tr utc="1756703700" data-time="07:15">
+                                        <th class="matrix-timeslot empty"></th>
+                                        <td class="slot normal r-51 s-15 free off-peak" type="free" slot="51"
+                                            rowspan="3">
+                                            <div class="slot-period"> 07:15</div>
+                                        </td>
+                                        <td class="slot normal r-52 s-15 free off-peak" type="free" slot="52"
+                                            rowspan="3">
+                                            <div class="slot-period"> 07:15</div>
+                                        </td>
+                                        <td class="slot normal r-53 s-15 free off-peak" type="free" slot="53"
+                                            rowspan="3">
+                                            <div class="slot-period"> 07:15</div>
+                                        </td>
+                                        <td class="slot normal r-54 s-15 free off-peak" type="free" slot="54"
+                                            rowspan="3">
+                                            <div class="slot-period"> 07:15</div>
+                                        </td>
+                                        <td class="slot normal r-55 s-15 free off-peak" type="free" slot="55"
+                                            rowspan="3">
+                                            <div class="slot-period"> 07:15</div>
+                                        </td>
+                                        <td class="slot normal r-56 s-15 closed" title="07:15 - 07:45" rowspan="2">
+                                        </td>
+                                        <td class="slot normal r-57 s-15 closed" title="07:15 - 07:45" rowspan="2">
+                                        </td>
+                                        <td class="slot normal r-58 s-15 closed" title="07:15 - 07:45" rowspan="2">
+                                        </td>
+                                        <td class="slot normal r-59 s-15 closed" title="07:15 - 07:45" rowspan="2">
+                                        </td>
+                                        <td class="slot normal r-60 s-15 closed" title="07:15 - 07:45" rowspan="2">
+                                        </td>
+                                        <td class="slot normal r-61 s-15 closed" title="07:15 - 07:30"></td>
+                                        <td class="slot normal r-62 s-15 closed" title="07:15 - 07:30"></td>
+                                        <td class="slot normal r-63 s-15 closed" title="07:15 - 07:30"></td>
+                                    </tr>
+                                    <tr utc="1756704600" data-time="07:30">
+                                        <th class="matrix-timeslot empty"></th>
+                                        <td class="slot normal r-61 s-15 free off-peak" type="free" slot="61"
+                                            rowspan="3">
+                                            <div class="slot-period"> 07:30</div>
+                                        </td>
+                                        <td class="slot normal r-62 s-15 free off-peak" type="free" slot="62"
+                                            rowspan="3">
+                                            <div class="slot-period"> 07:30</div>
+                                        </td>
+                                        <td class="slot normal r-63 s-15 free off-peak" type="free" slot="63"
+                                            rowspan="3">
+                                            <div class="slot-period"> 07:30</div>
+                                        </td>
+                                    </tr>
+                                    <tr utc="1756705500" data-time="07:45">
+                                        <th class="matrix-timeslot empty"></th>
+                                        <td class="slot normal r-56 s-15 free off-peak" type="free" slot="56"
+                                            rowspan="3">
+                                            <div class="slot-period"> 07:45</div>
+                                        </td>
+                                        <td class="slot normal r-57 s-15 free off-peak" type="free" slot="57"
+                                            rowspan="3">
+                                            <div class="slot-period"> 07:45</div>
+                                        </td>
+                                        <td class="slot normal r-58 s-15 free off-peak" type="free" slot="58"
+                                            rowspan="3">
+                                            <div class="slot-period"> 07:45</div>
+                                        </td>
+                                        <td class="slot normal r-59 s-15 free off-peak" type="free" slot="59"
+                                            rowspan="3">
+                                            <div class="slot-period"> 07:45</div>
+                                        </td>
+                                        <td class="slot normal r-60 s-15 free off-peak" type="free" slot="60"
+                                            rowspan="3">
+                                            <div class="slot-period"> 07:45</div>
+                                        </td>
+                                    </tr>
+                                    <tr utc="1756706400" data-time="08:00">
+                                        <th class="matrix-timeslot empty"></th>
+                                        <td class="slot normal r-51 s-15 free off-peak" type="free" slot="51"
+                                            rowspan="3">
+                                            <div class="slot-period"> 08:00</div>
+                                        </td>
+                                        <td class="slot normal r-52 s-15 free off-peak" type="free" slot="52"
+                                            rowspan="3">
+                                            <div class="slot-period"> 08:00</div>
+                                        </td>
+                                        <td class="slot normal r-53 s-15 free off-peak" type="free" slot="53"
+                                            rowspan="3">
+                                            <div class="slot-period"> 08:00</div>
+                                        </td>
+                                        <td class="slot normal r-54 s-15 free off-peak" type="free" slot="54"
+                                            rowspan="3">
+                                            <div class="slot-period"> 08:00</div>
+                                        </td>
+                                        <td class="slot normal r-55 s-15 free off-peak" type="free" slot="55"
+                                            rowspan="3">
+                                            <div class="slot-period"> 08:00</div>
+                                        </td>
+                                    </tr>
+                                    <tr utc="1756707300" data-time="08:15">
+                                        <th class="matrix-timeslot empty"></th>
+                                        <td class="slot normal r-61 s-15 free off-peak" type="free" slot="61"
+                                            rowspan="3">
+                                            <div class="slot-period"> 08:15</div>
+                                        </td>
+                                        <td class="slot normal r-62 s-15 free off-peak" type="free" slot="62"
+                                            rowspan="3">
+                                            <div class="slot-period"> 08:15</div>
+                                        </td>
+                                        <td class="slot normal r-63 s-15 taken" type="taken" finishes="1756720800"
+                                            id="matrix-res-11985019" rowspan="15">
+                                            <div class="slot-period"> 08:15</div>
+                                            <div class="players"> <b>Reserved</b></div>
+                                        </td>
+                                    </tr>
+                                    <tr utc="1756708200" data-time="08:30">
+                                        <th class="matrix-timeslot empty"></th>
+                                        <td class="slot normal r-56 s-15 free off-peak" type="free" slot="56"
+                                            rowspan="3">
+                                            <div class="slot-period"> 08:30</div>
+                                        </td>
+                                        <td class="slot normal r-57 s-15 free off-peak" type="free" slot="57"
+                                            rowspan="3">
+                                            <div class="slot-period"> 08:30</div>
+                                        </td>
+                                        <td class="slot normal r-58 s-15 free off-peak" type="free" slot="58"
+                                            rowspan="3">
+                                            <div class="slot-period"> 08:30</div>
+                                        </td>
+                                        <td class="slot normal r-59 s-15 free off-peak" type="free" slot="59"
+                                            rowspan="3">
+                                            <div class="slot-period"> 08:30</div>
+                                        </td>
+                                        <td class="slot normal r-60 s-15 free off-peak" type="free" slot="60"
+                                            rowspan="3">
+                                            <div class="slot-period"> 08:30</div>
+                                        </td>
+                                    </tr>
+                                    <tr utc="1756709100" data-time="08:45">
+                                        <th class="matrix-timeslot empty"></th>
+                                        <td class="slot normal r-51 s-15 free off-peak" type="free" slot="51"
+                                            rowspan="3">
+                                            <div class="slot-period"> 08:45</div>
+                                        </td>
+                                        <td class="slot normal r-52 s-15 free off-peak" type="free" slot="52"
+                                            rowspan="3">
+                                            <div class="slot-period"> 08:45</div>
+                                        </td>
+                                        <td class="slot normal r-53 s-15 free off-peak" type="free" slot="53"
+                                            rowspan="3">
+                                            <div class="slot-period"> 08:45</div>
+                                        </td>
+                                        <td class="slot normal r-54 s-15 free off-peak" type="free" slot="54"
+                                            rowspan="3">
+                                            <div class="slot-period"> 08:45</div>
+                                        </td>
+                                        <td class="slot normal r-55 s-15 free off-peak" type="free" slot="55"
+                                            rowspan="3">
+                                            <div class="slot-period"> 08:45</div>
+                                        </td>
+                                    </tr>
+                                    <tr utc="1756710000" data-time="09:00">
+                                        <th class="matrix-timeslot empty"></th>
+                                        <td class="slot normal r-61 s-15 free off-peak" type="free" slot="61"
+                                            rowspan="3">
+                                            <div class="slot-period"> 09:00</div>
+                                        </td>
+                                        <td class="slot normal r-62 s-15 free off-peak" type="free" slot="62"
+                                            rowspan="3">
+                                            <div class="slot-period"> 09:00</div>
+                                        </td>
+                                    </tr>
+                                    <tr utc="1756710900" data-time="09:15">
+                                        <th class="matrix-timeslot empty"></th>
+                                        <td class="slot normal r-56 s-15 free off-peak" type="free" slot="56"
+                                            rowspan="3">
+                                            <div class="slot-period"> 09:15</div>
+                                        </td>
+                                        <td class="slot normal r-57 s-15 free off-peak" type="free" slot="57"
+                                            rowspan="3">
+                                            <div class="slot-period"> 09:15</div>
+                                        </td>
+                                        <td class="slot normal r-58 s-15 free off-peak" type="free" slot="58"
+                                            rowspan="3">
+                                            <div class="slot-period"> 09:15</div>
+                                        </td>
+                                        <td class="slot normal r-59 s-15 free off-peak" type="free" slot="59"
+                                            rowspan="3">
+                                            <div class="slot-period"> 09:15</div>
+                                        </td>
+                                        <td class="slot normal r-60 s-15 free off-peak" type="free" slot="60"
+                                            rowspan="3">
+                                            <div class="slot-period"> 09:15</div>
+                                        </td>
+                                    </tr>
+                                    <tr utc="1756711800" data-time="09:30">
+                                        <th class="matrix-timeslot empty"></th>
+                                        <td class="slot normal r-51 s-15 free off-peak" type="free" slot="51"
+                                            rowspan="3">
+                                            <div class="slot-period"> 09:30</div>
+                                        </td>
+                                        <td class="slot normal r-52 s-15 free off-peak" type="free" slot="52"
+                                            rowspan="3">
+                                            <div class="slot-period"> 09:30</div>
+                                        </td>
+                                        <td class="slot normal r-53 s-15 free off-peak" type="free" slot="53"
+                                            rowspan="3">
+                                            <div class="slot-period"> 09:30</div>
+                                        </td>
+                                        <td class="slot normal r-54 s-15 free off-peak" type="free" slot="54"
+                                            rowspan="3">
+                                            <div class="slot-period"> 09:30</div>
+                                        </td>
+                                        <td class="slot normal r-55 s-15 free off-peak" type="free" slot="55"
+                                            rowspan="3">
+                                            <div class="slot-period"> 09:30</div>
+                                        </td>
+                                    </tr>
+                                    <tr utc="1756712700" data-time="09:45">
+                                        <th class="matrix-timeslot empty"></th>
+                                        <td class="slot normal r-61 s-15 free off-peak" type="free" slot="61"
+                                            rowspan="3">
+                                            <div class="slot-period"> 09:45</div>
+                                        </td>
+                                        <td class="slot normal r-62 s-15 free off-peak" type="free" slot="62"
+                                            rowspan="3">
+                                            <div class="slot-period"> 09:45</div>
+                                        </td>
+                                    </tr>
+                                    <tr utc="1756713600" data-time="10:00">
+                                        <th class="matrix-timeslot empty"></th>
+                                        <td class="slot normal r-56 s-15 free off-peak" type="free" slot="56"
+                                            rowspan="3">
+                                            <div class="slot-period"> 10:00</div>
+                                        </td>
+                                        <td class="slot normal r-57 s-15 free off-peak" type="free" slot="57"
+                                            rowspan="3">
+                                            <div class="slot-period"> 10:00</div>
+                                        </td>
+                                        <td class="slot normal r-58 s-15 free off-peak" type="free" slot="58"
+                                            rowspan="3">
+                                            <div class="slot-period"> 10:00</div>
+                                        </td>
+                                        <td class="slot normal r-59 s-15 free off-peak" type="free" slot="59"
+                                            rowspan="3">
+                                            <div class="slot-period"> 10:00</div>
+                                        </td>
+                                        <td class="slot normal r-60 s-15 free off-peak" type="free" slot="60"
+                                            rowspan="3">
+                                            <div class="slot-period"> 10:00</div>
+                                        </td>
+                                    </tr>
+                                    <tr utc="1756714500" data-time="10:15">
+                                        <th class="matrix-timeslot empty"></th>
+                                        <td class="slot normal r-51 s-15 free off-peak" type="free" slot="51"
+                                            rowspan="3">
+                                            <div class="slot-period"> 10:15</div>
+                                        </td>
+                                        <td class="slot normal r-52 s-15 free off-peak" type="free" slot="52"
+                                            rowspan="3">
+                                            <div class="slot-period"> 10:15</div>
+                                        </td>
+                                        <td class="slot normal r-53 s-15 free off-peak" type="free" slot="53"
+                                            rowspan="3">
+                                            <div class="slot-period"> 10:15</div>
+                                        </td>
+                                        <td class="slot normal r-54 s-15 free off-peak" type="free" slot="54"
+                                            rowspan="3">
+                                            <div class="slot-period"> 10:15</div>
+                                        </td>
+                                        <td class="slot normal r-55 s-15 free off-peak" type="free" slot="55"
+                                            rowspan="3">
+                                            <div class="slot-period"> 10:15</div>
+                                        </td>
+                                    </tr>
+                                    <tr utc="1756715400" data-time="10:30">
+                                        <th class="matrix-timeslot empty"></th>
+                                        <td class="slot normal r-61 s-15 free off-peak" type="free" slot="61"
+                                            rowspan="3">
+                                            <div class="slot-period"> 10:30</div>
+                                        </td>
+                                        <td class="slot normal r-62 s-15 taken" type="taken" finishes="1756720800"
+                                            id="matrix-res-11986707" rowspan="6">
+                                            <div class="slot-period"> 10:30</div>
+                                            <div class="players"> <b>Reserved</b></div>
+                                        </td>
+                                    </tr>
+                                    <tr utc="1756716300" data-time="10:45">
+                                        <th class="matrix-timeslot empty"></th>
+                                        <td class="slot normal r-56 s-15 free off-peak" type="free" slot="56"
+                                            rowspan="3">
+                                            <div class="slot-period"> 10:45</div>
+                                        </td>
+                                        <td class="slot normal r-57 s-15 taken" type="taken" finishes="1756721700"
+                                            id="matrix-res-11986760" rowspan="6">
+                                            <div class="slot-period"> 10:45</div>
+                                            <div class="players"> <b>Reserved</b></div>
+                                        </td>
+                                        <td class="slot normal r-58 s-15 taken" type="taken" finishes="1756721700"
+                                            id="matrix-res-11986813" rowspan="6">
+                                            <div class="slot-period"> 10:45</div>
+                                            <div class="players"> <b>Reserved</b></div>
+                                        </td>
+                                        <td class="slot normal r-59 s-15 taken" type="taken" finishes="1756721700"
+                                            id="matrix-res-11986866" rowspan="6">
+                                            <div class="slot-period"> 10:45</div>
+                                            <div class="players"> <b>Reserved</b></div>
+                                        </td>
+                                        <td class="slot normal r-60 s-15 free off-peak" type="free" slot="60"
+                                            rowspan="3">
+                                            <div class="slot-period"> 10:45</div>
+                                        </td>
+                                    </tr>
+                                    <tr utc="1756717200" data-time="11:00">
+                                        <th class="matrix-timeslot empty"></th>
+                                        <td class="slot normal r-51 s-15 free off-peak" type="free" slot="51"
+                                            rowspan="3">
+                                            <div class="slot-period"> 11:00</div>
+                                        </td>
+                                        <td class="slot normal r-52 s-15 free off-peak" type="free" slot="52"
+                                            rowspan="3">
+                                            <div class="slot-period"> 11:00</div>
+                                        </td>
+                                        <td class="slot normal r-53 s-15 free off-peak" type="free" slot="53"
+                                            rowspan="3">
+                                            <div class="slot-period"> 11:00</div>
+                                        </td>
+                                        <td class="slot normal r-54 s-15 free off-peak" type="free" slot="54"
+                                            rowspan="3">
+                                            <div class="slot-period"> 11:00</div>
+                                        </td>
+                                        <td class="slot normal r-55 s-15 free off-peak" type="free" slot="55"
+                                            rowspan="3">
+                                            <div class="slot-period"> 11:00</div>
+                                        </td>
+                                    </tr>
+                                    <tr utc="1756718100" data-time="11:15">
+                                        <th class="matrix-timeslot empty"></th>
+                                        <td class="slot normal r-61 s-15 free off-peak" type="free" slot="61"
+                                            rowspan="3">
+                                            <div class="slot-period"> 11:15</div>
+                                        </td>
+                                    </tr>
+                                    <tr utc="1756719000" data-time="11:30">
+                                        <th class="matrix-timeslot empty"></th>
+                                        <td class="slot normal r-56 s-15 free off-peak" type="free" slot="56"
+                                            rowspan="3">
+                                            <div class="slot-period"> 11:30</div>
+                                        </td>
+                                        <td class="slot normal r-60 s-15 free off-peak" type="free" slot="60"
+                                            rowspan="3">
+                                            <div class="slot-period"> 11:30</div>
+                                        </td>
+                                    </tr>
+                                    <tr utc="1756719900" data-time="11:45">
+                                        <th class="matrix-timeslot empty"></th>
+                                        <td class="slot normal r-51 s-15 free off-peak" type="free" slot="51"
+                                            rowspan="3">
+                                            <div class="slot-period"> 11:45</div>
+                                        </td>
+                                        <td class="slot normal r-52 s-15 free off-peak" type="free" slot="52"
+                                            rowspan="3">
+                                            <div class="slot-period"> 11:45</div>
+                                        </td>
+                                        <td class="slot normal r-53 s-15 free off-peak" type="free" slot="53"
+                                            rowspan="3">
+                                            <div class="slot-period"> 11:45</div>
+                                        </td>
+                                        <td class="slot normal r-54 s-15 free off-peak" type="free" slot="54"
+                                            rowspan="3">
+                                            <div class="slot-period"> 11:45</div>
+                                        </td>
+                                        <td class="slot normal r-55 s-15 free off-peak" type="free" slot="55"
+                                            rowspan="3">
+                                            <div class="slot-period"> 11:45</div>
+                                        </td>
+                                    </tr>
+                                    <tr utc="1756720800" data-time="12:00">
+                                        <th class="matrix-timeslot empty"></th>
+                                        <td class="slot normal r-61 s-15 free off-peak" type="free" slot="61"
+                                            rowspan="3">
+                                            <div class="slot-period"> 12:00</div>
+                                        </td>
+                                        <td class="slot normal r-62 s-15 free off-peak" type="free" slot="62"
+                                            rowspan="3">
+                                            <div class="slot-period"> 12:00</div>
+                                        </td>
+                                        <td class="slot normal r-63 s-15 free off-peak" type="free" slot="63"
+                                            rowspan="3">
+                                            <div class="slot-period"> 12:00</div>
+                                        </td>
+                                    </tr>
+                                    <tr utc="1756721700" data-time="12:15">
+                                        <th class="matrix-timeslot empty"></th>
+                                        <td class="slot normal r-56 s-15 taken" type="taken" finishes="1756724400"
+                                            id="matrix-res-12162336" rowspan="3">
+                                            <div class="slot-period"> 12:15</div>
+                                            <div class="players"> <b>Reserved</b></div>
+                                        </td>
+                                        <td class="slot normal r-57 s-15 free off-peak" type="free" slot="57"
+                                            rowspan="3">
+                                            <div class="slot-period"> 12:15</div>
+                                        </td>
+                                        <td class="slot normal r-58 s-15 free off-peak" type="free" slot="58"
+                                            rowspan="3">
+                                            <div class="slot-period"> 12:15</div>
+                                        </td>
+                                        <td class="slot normal r-59 s-15 free off-peak" type="free" slot="59"
+                                            rowspan="3">
+                                            <div class="slot-period"> 12:15</div>
+                                        </td>
+                                        <td class="slot normal r-60 s-15 free off-peak" type="free" slot="60"
+                                            rowspan="3">
+                                            <div class="slot-period"> 12:15</div>
+                                        </td>
+                                    </tr>
+                                    <tr utc="1756722600" data-time="12:30">
+                                        <th class="matrix-timeslot empty"></th>
+                                        <td class="slot normal r-51 s-15 taken" type="taken" finishes="1756725300"
+                                            id="matrix-res-12162747" rowspan="3">
+                                            <div class="slot-period"> 12:30</div>
+                                            <div class="players"> <b>Reserved</b></div>
+                                        </td>
+                                        <td class="slot normal r-52 s-15 free off-peak" type="free" slot="52"
+                                            rowspan="3">
+                                            <div class="slot-period"> 12:30</div>
+                                        </td>
+                                        <td class="slot normal r-53 s-15 free off-peak" type="free" slot="53"
+                                            rowspan="3">
+                                            <div class="slot-period"> 12:30</div>
+                                        </td>
+                                        <td class="slot normal r-54 s-15 free off-peak" type="free" slot="54"
+                                            rowspan="3">
+                                            <div class="slot-period"> 12:30</div>
+                                        </td>
+                                        <td class="slot normal r-55 s-15 free off-peak" type="free" slot="55"
+                                            rowspan="3">
+                                            <div class="slot-period"> 12:30</div>
+                                        </td>
+                                    </tr>
+                                    <tr utc="1756723500" data-time="12:45">
+                                        <th class="matrix-timeslot empty"></th>
+                                        <td class="slot normal r-61 s-15 free off-peak" type="free" slot="61"
+                                            rowspan="3">
+                                            <div class="slot-period"> 12:45</div>
+                                        </td>
+                                        <td class="slot normal r-62 s-15 free off-peak" type="free" slot="62"
+                                            rowspan="3">
+                                            <div class="slot-period"> 12:45</div>
+                                        </td>
+                                        <td class="slot normal r-63 s-15 free off-peak" type="free" slot="63"
+                                            rowspan="3">
+                                            <div class="slot-period"> 12:45</div>
+                                        </td>
+                                    </tr>
+                                    <tr utc="1756724400" data-time="13:00">
+                                        <th class="matrix-timeslot empty"></th>
+                                        <td class="slot normal r-56 s-15 free off-peak" type="free" slot="56"
+                                            rowspan="3">
+                                            <div class="slot-period"> 13:00</div>
+                                        </td>
+                                        <td class="slot normal r-57 s-15 free off-peak" type="free" slot="57"
+                                            rowspan="3">
+                                            <div class="slot-period"> 13:00</div>
+                                        </td>
+                                        <td class="slot normal r-58 s-15 free off-peak" type="free" slot="58"
+                                            rowspan="3">
+                                            <div class="slot-period"> 13:00</div>
+                                        </td>
+                                        <td class="slot normal r-59 s-15 free off-peak" type="free" slot="59"
+                                            rowspan="3">
+                                            <div class="slot-period"> 13:00</div>
+                                        </td>
+                                        <td class="slot normal r-60 s-15 free off-peak" type="free" slot="60"
+                                            rowspan="3">
+                                            <div class="slot-period"> 13:00</div>
+                                        </td>
+                                    </tr>
+                                    <tr utc="1756725300" data-time="13:15">
+                                        <th class="matrix-timeslot empty"></th>
+                                        <td class="slot normal r-51 s-15 free off-peak" type="free" slot="51"
+                                            rowspan="3">
+                                            <div class="slot-period"> 13:15</div>
+                                        </td>
+                                        <td class="slot normal r-52 s-15 free off-peak" type="free" slot="52"
+                                            rowspan="3">
+                                            <div class="slot-period"> 13:15</div>
+                                        </td>
+                                        <td class="slot normal r-53 s-15 free off-peak" type="free" slot="53"
+                                            rowspan="3">
+                                            <div class="slot-period"> 13:15</div>
+                                        </td>
+                                        <td class="slot normal r-54 s-15 free off-peak" type="free" slot="54"
+                                            rowspan="3">
+                                            <div class="slot-period"> 13:15</div>
+                                        </td>
+                                        <td class="slot normal r-55 s-15 free off-peak" type="free" slot="55"
+                                            rowspan="3">
+                                            <div class="slot-period"> 13:15</div>
+                                        </td>
+                                    </tr>
+                                    <tr utc="1756726200" data-time="13:30">
+                                        <th class="matrix-timeslot empty"></th>
+                                        <td class="slot normal r-61 s-15 free off-peak" type="free" slot="61"
+                                            rowspan="3">
+                                            <div class="slot-period"> 13:30</div>
+                                        </td>
+                                        <td class="slot normal r-62 s-15 free off-peak" type="free" slot="62"
+                                            rowspan="3">
+                                            <div class="slot-period"> 13:30</div>
+                                        </td>
+                                        <td class="slot normal r-63 s-15 free off-peak" type="free" slot="63"
+                                            rowspan="3">
+                                            <div class="slot-period"> 13:30</div>
+                                        </td>
+                                    </tr>
+                                    <tr utc="1756727100" data-time="13:45">
+                                        <th class="matrix-timeslot empty"></th>
+                                        <td class="slot normal r-56 s-15 free off-peak" type="free" slot="56"
+                                            rowspan="3">
+                                            <div class="slot-period"> 13:45</div>
+                                        </td>
+                                        <td class="slot normal r-57 s-15 free off-peak" type="free" slot="57"
+                                            rowspan="3">
+                                            <div class="slot-period"> 13:45</div>
+                                        </td>
+                                        <td class="slot normal r-58 s-15 free off-peak" type="free" slot="58"
+                                            rowspan="3">
+                                            <div class="slot-period"> 13:45</div>
+                                        </td>
+                                        <td class="slot normal r-59 s-15 taken" type="taken" finishes="1756746000"
+                                            id="matrix-res-11987216" rowspan="21">
+                                            <div class="slot-period"> 13:45</div>
+                                            <div class="players"> <b>Reserved</b></div>
+                                        </td>
+                                        <td class="slot normal r-60 s-15 free off-peak" type="free" slot="60"
+                                            rowspan="3">
+                                            <div class="slot-period"> 13:45</div>
+                                        </td>
+                                    </tr>
+                                    <tr utc="1756728000" data-time="14:00">
+                                        <th class="matrix-timeslot empty"></th>
+                                        <td class="slot normal r-51 s-15 free off-peak" type="free" slot="51"
+                                            rowspan="3">
+                                            <div class="slot-period"> 14:00</div>
+                                        </td>
+                                        <td class="slot normal r-52 s-15 free off-peak" type="free" slot="52"
+                                            rowspan="3">
+                                            <div class="slot-period"> 14:00</div>
+                                        </td>
+                                        <td class="slot normal r-53 s-15 free off-peak" type="free" slot="53"
+                                            rowspan="3">
+                                            <div class="slot-period"> 14:00</div>
+                                        </td>
+                                        <td class="slot normal r-54 s-15 free off-peak" type="free" slot="54"
+                                            rowspan="3">
+                                            <div class="slot-period"> 14:00</div>
+                                        </td>
+                                        <td class="slot normal r-55 s-15 free off-peak" type="free" slot="55"
+                                            rowspan="3">
+                                            <div class="slot-period"> 14:00</div>
+                                        </td>
+                                    </tr>
+                                    <tr utc="1756728900" data-time="14:15">
+                                        <th class="matrix-timeslot empty"></th>
+                                        <td class="slot normal r-61 s-15 free off-peak" type="free" slot="61"
+                                            rowspan="3">
+                                            <div class="slot-period"> 14:15</div>
+                                        </td>
+                                        <td class="slot normal r-62 s-15 free off-peak" type="free" slot="62"
+                                            rowspan="3">
+                                            <div class="slot-period"> 14:15</div>
+                                        </td>
+                                        <td class="slot normal r-63 s-15 free off-peak" type="free" slot="63"
+                                            rowspan="3">
+                                            <div class="slot-period"> 14:15</div>
+                                        </td>
+                                    </tr>
+                                    <tr utc="1756729800" data-time="14:30">
+                                        <th class="matrix-timeslot empty"></th>
+                                        <td class="slot normal r-56 s-15 free off-peak" type="free" slot="56"
+                                            rowspan="3">
+                                            <div class="slot-period"> 14:30</div>
+                                        </td>
+                                        <td class="slot normal r-57 s-15 free off-peak" type="free" slot="57"
+                                            rowspan="3">
+                                            <div class="slot-period"> 14:30</div>
+                                        </td>
+                                        <td class="slot normal r-58 s-15 free off-peak" type="free" slot="58"
+                                            rowspan="3">
+                                            <div class="slot-period"> 14:30</div>
+                                        </td>
+                                        <td class="slot normal r-60 s-15 free off-peak" type="free" slot="60"
+                                            rowspan="3">
+                                            <div class="slot-period"> 14:30</div>
+                                        </td>
+                                    </tr>
+                                    <tr utc="1756730700" data-time="14:45">
+                                        <th class="matrix-timeslot empty"></th>
+                                        <td class="slot normal r-51 s-15 free off-peak" type="free" slot="51"
+                                            rowspan="3">
+                                            <div class="slot-period"> 14:45</div>
+                                        </td>
+                                        <td class="slot normal r-52 s-15 free off-peak" type="free" slot="52"
+                                            rowspan="3">
+                                            <div class="slot-period"> 14:45</div>
+                                        </td>
+                                        <td class="slot normal r-53 s-15 free off-peak" type="free" slot="53"
+                                            rowspan="3">
+                                            <div class="slot-period"> 14:45</div>
+                                        </td>
+                                        <td class="slot normal r-54 s-15 free off-peak" type="free" slot="54"
+                                            rowspan="3">
+                                            <div class="slot-period"> 14:45</div>
+                                        </td>
+                                        <td class="slot normal r-55 s-15 free off-peak" type="free" slot="55"
+                                            rowspan="3">
+                                            <div class="slot-period"> 14:45</div>
+                                        </td>
+                                    </tr>
+                                    <tr utc="1756731600" data-time="15:00">
+                                        <th class="matrix-timeslot empty"></th>
+                                        <td class="slot normal r-61 s-15 free off-peak" type="free" slot="61"
+                                            rowspan="3">
+                                            <div class="slot-period"> 15:00</div>
+                                        </td>
+                                        <td class="slot normal r-62 s-15 free off-peak" type="free" slot="62"
+                                            rowspan="3">
+                                            <div class="slot-period"> 15:00</div>
+                                        </td>
+                                        <td class="slot normal r-63 s-15 free off-peak" type="free" slot="63"
+                                            rowspan="3">
+                                            <div class="slot-period"> 15:00</div>
+                                        </td>
+                                    </tr>
+                                    <tr utc="1756732500" data-time="15:15">
+                                        <th class="matrix-timeslot empty"></th>
+                                        <td class="slot normal r-56 s-15 free off-peak" type="free" slot="56"
+                                            rowspan="3">
+                                            <div class="slot-period"> 15:15</div>
+                                        </td>
+                                        <td class="slot normal r-57 s-15 free off-peak" type="free" slot="57"
+                                            rowspan="3">
+                                            <div class="slot-period"> 15:15</div>
+                                        </td>
+                                        <td class="slot normal r-58 s-15 free off-peak" type="free" slot="58"
+                                            rowspan="3">
+                                            <div class="slot-period"> 15:15</div>
+                                        </td>
+                                        <td class="slot normal r-60 s-15 free off-peak" type="free" slot="60"
+                                            rowspan="3">
+                                            <div class="slot-period"> 15:15</div>
+                                        </td>
+                                    </tr>
+                                    <tr utc="1756733400" data-time="15:30">
+                                        <th class="matrix-timeslot empty"></th>
+                                        <td class="slot normal r-51 s-15 free off-peak" type="free" slot="51"
+                                            rowspan="3">
+                                            <div class="slot-period"> 15:30</div>
+                                        </td>
+                                        <td class="slot normal r-52 s-15 free off-peak" type="free" slot="52"
+                                            rowspan="3">
+                                            <div class="slot-period"> 15:30</div>
+                                        </td>
+                                        <td class="slot normal r-53 s-15 taken" type="taken" finishes="1756736100"
+                                            id="matrix-res-12158246" rowspan="3">
+                                            <div class="slot-period"> 15:30</div>
+                                            <div class="players"> <b>Reserved</b></div>
+                                        </td>
+                                        <td class="slot normal r-54 s-15 free off-peak" type="free" slot="54"
+                                            rowspan="3">
+                                            <div class="slot-period"> 15:30</div>
+                                        </td>
+                                        <td class="slot normal r-55 s-15 free off-peak" type="free" slot="55"
+                                            rowspan="3">
+                                            <div class="slot-period"> 15:30</div>
+                                        </td>
+                                    </tr>
+                                    <tr utc="1756734300" data-time="15:45">
+                                        <th class="matrix-timeslot empty"></th>
+                                        <td class="slot normal r-61 s-15 free off-peak" type="free" slot="61"
+                                            rowspan="3">
+                                            <div class="slot-period"> 15:45</div>
+                                        </td>
+                                        <td class="slot normal r-62 s-15 free off-peak" type="free" slot="62"
+                                            rowspan="3">
+                                            <div class="slot-period"> 15:45</div>
+                                        </td>
+                                        <td class="slot normal r-63 s-15 free off-peak" type="free" slot="63"
+                                            rowspan="3">
+                                            <div class="slot-period"> 15:45</div>
+                                        </td>
+                                    </tr>
+                                    <tr utc="1756735200" data-time="16:00">
+                                        <th class="matrix-timeslot empty"></th>
+                                        <td class="slot normal r-56 s-15 taken" type="taken" finishes="1756737900"
+                                            id="matrix-res-12149509" rowspan="3">
+                                            <div class="slot-period"> 16:00</div>
+                                            <div class="players"> <b>Reserved</b></div>
+                                        </td>
+                                        <td class="slot normal r-57 s-15 free off-peak" type="free" slot="57"
+                                            rowspan="3">
+                                            <div class="slot-period"> 16:00</div>
+                                        </td>
+                                        <td class="slot normal r-58 s-15 free off-peak" type="free" slot="58"
+                                            rowspan="3">
+                                            <div class="slot-period"> 16:00</div>
+                                        </td>
+                                        <td class="slot normal r-60 s-15 free off-peak" type="free" slot="60"
+                                            rowspan="3">
+                                            <div class="slot-period"> 16:00</div>
+                                        </td>
+                                    </tr>
+                                    <tr utc="1756736100" data-time="16:15">
+                                        <th class="matrix-timeslot empty"></th>
+                                        <td class="slot normal r-51 s-15 free off-peak" type="free" slot="51"
+                                            rowspan="3">
+                                            <div class="slot-period"> 16:15</div>
+                                        </td>
+                                        <td class="slot normal r-52 s-15 free off-peak" type="free" slot="52"
+                                            rowspan="3">
+                                            <div class="slot-period"> 16:15</div>
+                                        </td>
+                                        <td class="slot normal r-53 s-15 free off-peak" type="free" slot="53"
+                                            rowspan="3">
+                                            <div class="slot-period"> 16:15</div>
+                                        </td>
+                                        <td class="slot normal r-54 s-15 taken" type="taken" finishes="1756746900"
+                                            id="matrix-res-12150252" rowspan="12">
+                                            <div class="slot-period"> 16:15</div>
+                                            <div class="players"> <b>Reserved</b></div>
+                                        </td>
+                                        <td class="slot normal r-55 s-15 free off-peak" type="free" slot="55"
+                                            rowspan="3">
+                                            <div class="slot-period"> 16:15</div>
+                                        </td>
+                                    </tr>
+                                    <tr utc="1756737000" data-time="16:30">
+                                        <th class="matrix-timeslot empty"></th>
+                                        <td class="slot normal r-61 s-15 free off-peak" type="free" slot="61"
+                                            rowspan="3">
+                                            <div class="slot-period"> 16:30</div>
+                                        </td>
+                                        <td class="slot normal r-62 s-15 free off-peak" type="free" slot="62"
+                                            rowspan="3">
+                                            <div class="slot-period"> 16:30</div>
+                                        </td>
+                                        <td class="slot normal r-63 s-15 free off-peak" type="free" slot="63"
+                                            rowspan="3">
+                                            <div class="slot-period"> 16:30</div>
+                                        </td>
+                                    </tr>
+                                    <tr utc="1756737900" data-time="16:45">
+                                        <th class="matrix-timeslot empty"></th>
+                                        <td class="slot normal r-56 s-15 free off-peak" type="free" slot="56"
+                                            rowspan="3">
+                                            <div class="slot-period"> 16:45</div>
+                                        </td>
+                                        <td class="slot normal r-57 s-15 free off-peak" type="free" slot="57"
+                                            rowspan="3">
+                                            <div class="slot-period"> 16:45</div>
+                                        </td>
+                                        <td class="slot normal r-58 s-15 free off-peak" type="free" slot="58"
+                                            rowspan="3">
+                                            <div class="slot-period"> 16:45</div>
+                                        </td>
+                                        <td class="slot normal r-60 s-15 free off-peak" type="free" slot="60"
+                                            rowspan="3">
+                                            <div class="slot-period"> 16:45</div>
+                                        </td>
+                                    </tr>
+                                    <tr utc="1756738800" data-time="17:00">
+                                        <th class="matrix-timeslot empty"></th>
+                                        <td class="slot normal r-51 s-15 free off-peak" type="free" slot="51"
+                                            rowspan="3">
+                                            <div class="slot-period"> 17:00</div>
+                                        </td>
+                                        <td class="slot normal r-52 s-15 taken" type="taken" finishes="1756741500"
+                                            id="matrix-res-12162115" rowspan="3">
+                                            <div class="slot-period"> 17:00</div>
+                                            <div class="players"> <b>Reserved</b></div>
+                                        </td>
+                                        <td class="slot normal r-53 s-15 taken" type="taken" finishes="1756741500"
+                                            id="matrix-res-12137551" rowspan="3">
+                                            <div class="slot-period"> 17:00</div>
+                                            <div class="players"> <b>Reserved</b></div>
+                                        </td>
+                                        <td class="slot normal r-55 s-15 taken" type="taken" finishes="1756741500"
+                                            id="matrix-res-12150593" rowspan="3">
+                                            <div class="slot-period"> 17:00</div>
+                                            <div class="players"> <b>Reserved</b></div>
+                                        </td>
+                                    </tr>
+                                    <tr utc="1756739700" data-time="17:15">
+                                        <th class="matrix-timeslot empty"></th>
+                                        <td class="slot normal r-61 s-15 free peak" type="free" slot="61"
+                                            rowspan="3">
+                                            <div class="slot-period"> 17:15</div>
+                                        </td>
+                                        <td class="slot normal r-62 s-15 taken" type="taken" finishes="1756742400"
+                                            id="matrix-res-12157939" rowspan="3">
+                                            <div class="slot-period"> 17:15</div>
+                                            <div class="players"> <b>Reserved</b></div>
+                                        </td>
+                                        <td class="slot normal r-63 s-15 taken" type="taken" finishes="1756742400"
+                                            id="matrix-res-12137660" rowspan="3">
+                                            <div class="slot-period"> 17:15</div>
+                                            <div class="players"> <b>Reserved</b></div>
+                                        </td>
+                                    </tr>
+                                    <tr utc="1756740600" data-time="17:30">
+                                        <th class="matrix-timeslot empty"></th>
+                                        <td class="slot normal r-56 s-15 taken" type="taken" finishes="1756743300"
+                                            id="matrix-res-12137474" rowspan="3">
+                                            <div class="slot-period"> 17:30</div>
+                                            <div class="players"> <b>Reserved</b></div>
+                                        </td>
+                                        <td class="slot normal r-57 s-15 taken" type="taken" finishes="1756743300"
+                                            id="matrix-res-12138133" rowspan="3">
+                                            <div class="slot-period"> 17:30</div>
+                                            <div class="players"> <b>Reserved</b></div>
+                                        </td>
+                                        <td class="slot normal r-58 s-15 taken" type="taken" finishes="1756743300"
+                                            id="matrix-res-12137656" rowspan="3">
+                                            <div class="slot-period"> 17:30</div>
+                                            <div class="players"> <b>Reserved</b></div>
+                                        </td>
+                                        <td class="slot normal r-60 s-15 taken" type="taken" finishes="1756743300"
+                                            id="matrix-res-12137549" rowspan="3">
+                                            <div class="slot-period"> 17:30</div>
+                                            <div class="players"> <b>Reserved</b></div>
+                                        </td>
+                                    </tr>
+                                    <tr utc="1756741500" data-time="17:45">
+                                        <th class="matrix-timeslot empty"></th>
+                                        <td class="slot normal r-51 s-15 taken" type="taken" finishes="1756744200"
+                                            id="matrix-res-12144502" rowspan="3">
+                                            <div class="slot-period"> 17:45</div>
+                                            <div class="players"> <b>Reserved</b></div>
+                                        </td>
+                                        <td class="slot normal r-52 s-15 taken" type="taken" finishes="1756744200"
+                                            id="matrix-res-12137441" rowspan="3">
+                                            <div class="slot-period"> 17:45</div>
+                                            <div class="players"> <b>Reserved</b></div>
+                                        </td>
+                                        <td class="slot normal r-53 s-15 taken" type="taken" finishes="1756744200"
+                                            id="matrix-res-12137440" rowspan="3">
+                                            <div class="slot-period"> 17:45</div>
+                                            <div class="players"> <b>Reserved</b></div>
+                                        </td>
+                                        <td class="slot normal r-55 s-15 taken" type="taken" finishes="1756744200"
+                                            id="matrix-res-12141961" rowspan="3">
+                                            <div class="slot-period"> 17:45</div>
+                                            <div class="players"> <b>Reserved</b></div>
+                                        </td>
+                                    </tr>
+                                    <tr utc="1756742400" data-time="18:00">
+                                        <th class="matrix-timeslot empty"></th>
+                                        <td class="slot normal r-61 s-15 taken" type="taken" finishes="1756745100"
+                                            id="matrix-res-12152425" rowspan="3">
+                                            <div class="slot-period"> 18:00</div>
+                                            <div class="players"> <b>Reserved</b></div>
+                                        </td>
+                                        <td class="slot normal r-62 s-15 taken" type="taken" finishes="1756745100"
+                                            id="matrix-res-12137872" rowspan="3">
+                                            <div class="slot-period"> 18:00</div>
+                                            <div class="players"> <b>Reserved</b></div>
+                                        </td>
+                                        <td class="slot normal r-63 s-15 taken" type="taken" finishes="1756745100"
+                                            id="matrix-res-12148429" rowspan="3">
+                                            <div class="slot-period"> 18:00</div>
+                                            <div class="players"> <b>Reserved</b></div>
+                                        </td>
+                                    </tr>
+                                    <tr utc="1756743300" data-time="18:15">
+                                        <th class="matrix-timeslot empty"></th>
+                                        <td class="slot normal r-56 s-15 taken" type="taken" finishes="1756746000"
+                                            id="matrix-res-12137415" rowspan="3">
+                                            <div class="slot-period"> 18:15</div>
+                                            <div class="players"> <b>Reserved</b></div>
+                                        </td>
+                                        <td class="slot normal r-57 s-15 taken" type="taken" finishes="1756746000"
+                                            id="matrix-res-11534551" rowspan="3">
+                                            <div class="slot-period"> 18:15</div>
+                                            <div class="players"> <b>Reserved</b></div>
+                                        </td>
+                                        <td class="slot normal r-58 s-15 taken" type="taken" finishes="1756746000"
+                                            id="matrix-res-11534604" rowspan="3">
+                                            <div class="slot-period"> 18:15</div>
+                                            <div class="players"> <b>Reserved</b></div>
+                                        </td>
+                                        <td class="slot normal r-60 s-15 taken" type="taken" finishes="1756746000"
+                                            id="matrix-res-12137550" rowspan="3">
+                                            <div class="slot-period"> 18:15</div>
+                                            <div class="players"> <b>Reserved</b></div>
+                                        </td>
+                                    </tr>
+                                    <tr utc="1756744200" data-time="18:30">
+                                        <th class="matrix-timeslot empty"></th>
+                                        <td class="slot normal r-51 s-15 taken" type="taken" finishes="1756749600"
+                                            id="matrix-res-12137452" rowspan="6">
+                                            <div class="slot-period"> 18:30</div>
+                                            <div class="players"> <b>Reserved</b></div>
+                                        </td>
+                                        <td class="slot normal r-52 s-15 taken" type="taken" finishes="1756749600"
+                                            id="matrix-res-12137454" rowspan="6">
+                                            <div class="slot-period"> 18:30</div>
+                                            <div class="players"> <b>Reserved</b></div>
+                                        </td>
+                                        <td class="slot normal r-53 s-15 taken" type="taken" finishes="1756746900"
+                                            id="matrix-res-12137442" rowspan="3">
+                                            <div class="slot-period"> 18:30</div>
+                                            <div class="players"> <b>Reserved</b></div>
+                                        </td>
+                                        <td class="slot normal r-55 s-15 taken" type="taken" finishes="1756746900"
+                                            id="matrix-res-12137473" rowspan="3">
+                                            <div class="slot-period"> 18:30</div>
+                                            <div class="players"> <b>Reserved</b></div>
+                                        </td>
+                                    </tr>
+                                    <tr utc="1756745100" data-time="18:45">
+                                        <th class="matrix-timeslot empty"></th>
+                                        <td class="slot normal r-61 s-15 taken" type="taken" finishes="1756747800"
+                                            id="matrix-res-12137459" rowspan="3">
+                                            <div class="slot-period"> 18:45</div>
+                                            <div class="players"> <b>Reserved</b></div>
+                                        </td>
+                                        <td class="slot normal r-62 s-15 taken" type="taken" finishes="1756747800"
+                                            id="matrix-res-12137823" rowspan="3">
+                                            <div class="slot-period"> 18:45</div>
+                                            <div class="players"> <b>Reserved</b></div>
+                                        </td>
+                                        <td class="slot normal r-63 s-15 taken" type="taken" finishes="1756747800"
+                                            id="matrix-res-12137479" rowspan="3">
+                                            <div class="slot-period"> 18:45</div>
+                                            <div class="players"> <b>Reserved</b></div>
+                                        </td>
+                                    </tr>
+                                    <tr utc="1756746000" data-time="19:00">
+                                        <th class="matrix-timeslot empty"></th>
+                                        <td class="slot normal r-56 s-15 taken" type="taken" finishes="1756748700"
+                                            id="matrix-res-12137416" rowspan="3">
+                                            <div class="slot-period"> 19:00</div>
+                                            <div class="players"> <b>Reserved</b></div>
+                                        </td>
+                                        <td class="slot normal r-57 s-15 taken" type="taken" finishes="1756748700"
+                                            id="matrix-res-12137464" rowspan="3">
+                                            <div class="slot-period"> 19:00</div>
+                                            <div class="players"> <b>Reserved</b></div>
+                                        </td>
+                                        <td class="slot normal r-58 s-15 taken" type="taken" finishes="1756748700"
+                                            id="matrix-res-12137709" rowspan="3">
+                                            <div class="slot-period"> 19:00</div>
+                                            <div class="players"> <b>Reserved</b></div>
+                                        </td>
+                                        <td class="slot normal r-59 s-15 taken" type="taken" finishes="1756756800"
+                                            id="matrix-res-11987276" rowspan="12">
+                                            <div class="slot-period"> 19:00</div>
+                                            <div class="players"> <b>Reserved</b></div>
+                                        </td>
+                                        <td class="slot normal r-60 s-15 taken" type="taken" finishes="1756748700"
+                                            id="matrix-res-12137884" rowspan="3">
+                                            <div class="slot-period"> 19:00</div>
+                                            <div class="players"> <b>Reserved</b></div>
+                                        </td>
+                                    </tr>
+                                    <tr utc="1756746900" data-time="19:15">
+                                        <th class="matrix-timeslot empty"></th>
+                                        <td class="slot normal r-53 s-15 taken" type="taken" finishes="1756749600"
+                                            id="matrix-res-12137437" rowspan="3">
+                                            <div class="slot-period"> 19:15</div>
+                                            <div class="players"> <b>Reserved</b></div>
+                                        </td>
+                                        <td class="slot normal r-54 s-15 taken" type="taken" finishes="1756749600"
+                                            id="matrix-res-12138291" rowspan="3">
+                                            <div class="slot-period"> 19:15</div>
+                                            <div class="players"> <b>Reserved</b></div>
+                                        </td>
+                                        <td class="slot normal r-55 s-15 taken" type="taken" finishes="1756749600"
+                                            id="matrix-res-12137891" rowspan="3">
+                                            <div class="slot-period"> 19:15</div>
+                                            <div class="players"> <b>Reserved</b></div>
+                                        </td>
+                                    </tr>
+                                    <tr utc="1756747800" data-time="19:30">
+                                        <th class="matrix-timeslot empty"></th>
+                                        <td class="slot normal r-61 s-15 taken" type="taken" finishes="1756750500"
+                                            id="matrix-res-12137425" rowspan="3">
+                                            <div class="slot-period"> 19:30</div>
+                                            <div class="players"> <b>Reserved</b></div>
+                                        </td>
+                                        <td class="slot normal r-62 s-15 taken" type="taken" finishes="1756750500"
+                                            id="matrix-res-12137825" rowspan="3">
+                                            <div class="slot-period"> 19:30</div>
+                                            <div class="players"> <b>Reserved</b></div>
+                                        </td>
+                                        <td class="slot normal r-63 s-15 taken" type="taken" finishes="1756750500"
+                                            id="matrix-res-12137453" rowspan="3">
+                                            <div class="slot-period"> 19:30</div>
+                                            <div class="players"> <b>Reserved</b></div>
+                                        </td>
+                                    </tr>
+                                    <tr utc="1756748700" data-time="19:45">
+                                        <th class="matrix-timeslot empty"></th>
+                                        <td class="slot normal r-56 s-15 taken" type="taken" finishes="1756751400"
+                                            id="matrix-res-12137430" rowspan="3">
+                                            <div class="slot-period"> 19:45</div>
+                                            <div class="players"> <b>Reserved</b></div>
+                                        </td>
+                                        <td class="slot normal r-57 s-15 taken" type="taken" finishes="1756751400"
+                                            id="matrix-res-12137418" rowspan="3">
+                                            <div class="slot-period"> 19:45</div>
+                                            <div class="players"> <b>Reserved</b></div>
+                                        </td>
+                                        <td class="slot normal r-58 s-15 taken" type="taken" finishes="1756751400"
+                                            id="matrix-res-12155429" rowspan="3">
+                                            <div class="slot-period"> 19:45</div>
+                                            <div class="players"> <b>Reserved</b></div>
+                                        </td>
+                                        <td class="slot normal r-60 s-15 taken" type="taken" finishes="1756751400"
+                                            id="matrix-res-12137672" rowspan="3">
+                                            <div class="slot-period"> 19:45</div>
+                                            <div class="players"> <b>Reserved</b></div>
+                                        </td>
+                                    </tr>
+                                    <tr utc="1756749600" data-time="20:00">
+                                        <th class="matrix-timeslot empty"></th>
+                                        <td class="slot normal r-51 s-15 taken" type="taken" finishes="1756752300"
+                                            id="matrix-res-12138442" rowspan="3">
+                                            <div class="slot-period"> 20:00</div>
+                                            <div class="players"> <b>Reserved</b></div>
+                                        </td>
+                                        <td class="slot normal r-52 s-15 taken" type="taken" finishes="1756752300"
+                                            id="matrix-res-12137443" rowspan="3">
+                                            <div class="slot-period"> 20:00</div>
+                                            <div class="players"> <b>Reserved</b></div>
+                                        </td>
+                                        <td class="slot normal r-53 s-15 taken" type="taken" finishes="1756752300"
+                                            id="matrix-res-11398061" rowspan="3">
+                                            <div class="slot-period"> 20:00</div>
+                                            <div class="players"> <b>Reserved</b></div>
+                                        </td>
+                                        <td class="slot normal r-54 s-15 taken" type="taken" finishes="1756752300"
+                                            id="matrix-res-11398009" rowspan="3">
+                                            <div class="slot-period"> 20:00</div>
+                                            <div class="players"> <b>Reserved</b></div>
+                                        </td>
+                                        <td class="slot normal r-55 s-15 taken" type="taken" finishes="1756752300"
+                                            id="matrix-res-12137446" rowspan="3">
+                                            <div class="slot-period"> 20:00</div>
+                                            <div class="players"> <b>Reserved</b></div>
+                                        </td>
+                                    </tr>
+                                    <tr utc="1756750500" data-time="20:15">
+                                        <th class="matrix-timeslot empty"></th>
+                                        <td class="slot normal r-61 s-15 taken" type="taken" finishes="1756753200"
+                                            id="matrix-res-12142394" rowspan="3">
+                                            <div class="slot-period"> 20:15</div>
+                                            <div class="players"> <b>Reserved</b></div>
+                                        </td>
+                                        <td class="slot normal r-62 s-15 taken" type="taken" finishes="1756753200"
+                                            id="matrix-res-12144440" rowspan="3">
+                                            <div class="slot-period"> 20:15</div>
+                                            <div class="players"> <b>Reserved</b></div>
+                                        </td>
+                                        <td class="slot normal r-63 s-15 taken" type="taken" finishes="1756753200"
+                                            id="matrix-res-12150587" rowspan="3">
+                                            <div class="slot-period"> 20:15</div>
+                                            <div class="players"> <b>Reserved</b></div>
+                                        </td>
+                                    </tr>
+                                    <tr utc="1756751400" data-time="20:30">
+                                        <th class="matrix-timeslot empty"></th>
+                                        <td class="slot normal r-56 s-15 taken" type="taken" finishes="1756754100"
+                                            id="matrix-res-12137449" rowspan="3">
+                                            <div class="slot-period"> 20:30</div>
+                                            <div class="players"> <b>Reserved</b></div>
+                                        </td>
+                                        <td class="slot normal r-57 s-15 taken" type="taken" finishes="1756754100"
+                                            id="matrix-res-12137438" rowspan="3">
+                                            <div class="slot-period"> 20:30</div>
+                                            <div class="players"> <b>Reserved</b></div>
+                                        </td>
+                                        <td class="slot normal r-58 s-15 taken" type="taken" finishes="1756754100"
+                                            id="matrix-res-12143673" rowspan="3">
+                                            <div class="slot-period"> 20:30</div>
+                                            <div class="players"> <b>Reserved</b></div>
+                                        </td>
+                                        <td class="slot normal r-60 s-15 taken" type="taken" finishes="1756754100"
+                                            id="matrix-res-12138253" rowspan="3">
+                                            <div class="slot-period"> 20:30</div>
+                                            <div class="players"> <b>Reserved</b></div>
+                                        </td>
+                                    </tr>
+                                    <tr utc="1756752300" data-time="20:45">
+                                        <th class="matrix-timeslot empty"></th>
+                                        <td class="slot normal r-51 s-15 taken" type="taken" finishes="1756755000"
+                                            id="matrix-res-12162805" rowspan="3">
+                                            <div class="slot-period"> 20:45</div>
+                                            <div class="players"> <b>Reserved</b></div>
+                                        </td>
+                                        <td class="slot normal r-52 s-15 taken" type="taken" finishes="1756755000"
+                                            id="matrix-res-12137451" rowspan="3">
+                                            <div class="slot-period"> 20:45</div>
+                                            <div class="players"> <b>Reserved</b></div>
+                                        </td>
+                                        <td class="slot normal r-53 s-15 taken" type="taken" finishes="1756755000"
+                                            id="matrix-res-12142900" rowspan="3">
+                                            <div class="slot-period"> 20:45</div>
+                                            <div class="players"> <b>Reserved</b></div>
+                                        </td>
+                                        <td class="slot normal r-54 s-15 taken" type="taken" finishes="1756755000"
+                                            id="matrix-res-12162695" rowspan="3">
+                                            <div class="slot-period"> 20:45</div>
+                                            <div class="players"> <b>Reserved</b></div>
+                                        </td>
+                                        <td class="slot normal r-55 s-15 taken" type="taken" finishes="1756755000"
+                                            id="matrix-res-12143719" rowspan="3">
+                                            <div class="slot-period"> 20:45</div>
+                                            <div class="players"> <b>Reserved</b></div>
+                                        </td>
+                                    </tr>
+                                    <tr utc="1756753200" data-time="21:00">
+                                        <th class="matrix-timeslot empty"></th>
+                                        <td class="slot normal r-61 s-15 free peak" type="free" slot="61"
+                                            rowspan="3">
+                                            <div class="slot-period"> 21:00</div>
+                                        </td>
+                                        <td class="slot normal r-62 s-15 free peak" type="free" slot="62"
+                                            rowspan="3">
+                                            <div class="slot-period"> 21:00</div>
+                                        </td>
+                                        <td class="slot normal r-63 s-15 free peak" type="free" slot="63"
+                                            rowspan="3">
+                                            <div class="slot-period"> 21:00</div>
+                                        </td>
+                                    </tr>
+                                    <tr utc="1756754100" data-time="21:15">
+                                        <th class="matrix-timeslot empty"></th>
+                                        <td class="slot normal r-56 s-15 free peak" type="free" slot="56"
+                                            rowspan="3">
+                                            <div class="slot-period"> 21:15</div>
+                                        </td>
+                                        <td class="slot normal r-57 s-15 free peak" type="free" slot="57"
+                                            rowspan="3">
+                                            <div class="slot-period"> 21:15</div>
+                                        </td>
+                                        <td class="slot normal r-58 s-15 taken" type="taken" finishes="1756756800"
+                                            id="matrix-res-12131621" rowspan="3">
+                                            <div class="slot-period"> 21:15</div>
+                                            <div class="players"> <b>Reserved</b></div>
+                                        </td>
+                                        <td class="slot normal r-60 s-15 free peak" type="free" slot="60"
+                                            rowspan="3">
+                                            <div class="slot-period"> 21:15</div>
+                                        </td>
+                                    </tr>
+                                    <tr utc="1756755000" data-time="21:30">
+                                        <th class="matrix-timeslot empty"></th>
+                                        <td class="slot normal r-51 s-15 free peak" type="free" slot="51"
+                                            rowspan="3">
+                                            <div class="slot-period"> 21:30</div>
+                                        </td>
+                                        <td class="slot normal r-52 s-15 free peak" type="free" slot="52"
+                                            rowspan="3">
+                                            <div class="slot-period"> 21:30</div>
+                                        </td>
+                                        <td class="slot normal r-53 s-15 free peak" type="free" slot="53"
+                                            rowspan="3">
+                                            <div class="slot-period"> 21:30</div>
+                                        </td>
+                                        <td class="slot normal r-54 s-15 free peak" type="free" slot="54"
+                                            rowspan="3">
+                                            <div class="slot-period"> 21:30</div>
+                                        </td>
+                                        <td class="slot normal r-55 s-15 free peak" type="free" slot="55"
+                                            rowspan="3">
+                                            <div class="slot-period"> 21:30</div>
+                                        </td>
+                                    </tr>
+                                    <tr utc="1756755900" data-time="21:45">
+                                        <th class="matrix-timeslot empty"></th>
+                                        <td class="slot normal r-61 s-15 free peak" type="free" slot="61"
+                                            rowspan="3">
+                                            <div class="slot-period"> 21:45</div>
+                                        </td>
+                                        <td class="slot normal r-62 s-15 free peak" type="free" slot="62"
+                                            rowspan="3">
+                                            <div class="slot-period"> 21:45</div>
+                                        </td>
+                                        <td class="slot normal r-63 s-15 free peak" type="free" slot="63"
+                                            rowspan="3">
+                                            <div class="slot-period"> 21:45</div>
+                                        </td>
+                                    </tr>
+                                    <tr utc="1756756800" data-time="22:00">
+                                        <th class="matrix-timeslot empty"></th>
+                                        <td class="slot normal r-56 s-15 free off-peak" type="free" slot="56"
+                                            rowspan="3">
+                                            <div class="slot-period"> 22:00</div>
+                                        </td>
+                                        <td class="slot normal r-57 s-15 free off-peak" type="free" slot="57"
+                                            rowspan="3">
+                                            <div class="slot-period"> 22:00</div>
+                                        </td>
+                                        <td class="slot normal r-58 s-15 free off-peak" type="free" slot="58"
+                                            rowspan="3">
+                                            <div class="slot-period"> 22:00</div>
+                                        </td>
+                                        <td class="slot normal r-59 s-15 free off-peak" type="free" slot="59"
+                                            rowspan="3">
+                                            <div class="slot-period"> 22:00</div>
+                                        </td>
+                                        <td class="slot normal r-60 s-15 free off-peak" type="free" slot="60"
+                                            rowspan="3">
+                                            <div class="slot-period"> 22:00</div>
+                                        </td>
+                                    </tr>
+                                    <tr utc="1756757700" data-time="22:15">
+                                        <th class="matrix-timeslot empty"></th>
+                                        <td class="slot normal r-51 s-15 free off-peak" type="free" slot="51"
+                                            rowspan="3">
+                                            <div class="slot-period"> 22:15</div>
+                                        </td>
+                                        <td class="slot normal r-52 s-15 free off-peak" type="free" slot="52"
+                                            rowspan="3">
+                                            <div class="slot-period"> 22:15</div>
+                                        </td>
+                                        <td class="slot normal r-53 s-15 free off-peak" type="free" slot="53"
+                                            rowspan="3">
+                                            <div class="slot-period"> 22:15</div>
+                                        </td>
+                                        <td class="slot normal r-54 s-15 free off-peak" type="free" slot="54"
+                                            rowspan="3">
+                                            <div class="slot-period"> 22:15</div>
+                                        </td>
+                                        <td class="slot normal r-55 s-15 free off-peak" type="free" slot="55"
+                                            rowspan="3">
+                                            <div class="slot-period"> 22:15</div>
+                                        </td>
+                                    </tr>
+                                    <tr utc="1756758600" data-time="22:30">
+                                        <th class="matrix-timeslot empty"></th>
+                                        <td class="slot normal r-61 s-15 free off-peak" type="free" slot="61"
+                                            rowspan="3">
+                                            <div class="slot-period"> 22:30</div>
+                                        </td>
+                                        <td class="slot normal r-62 s-15 free off-peak" type="free" slot="62"
+                                            rowspan="3">
+                                            <div class="slot-period"> 22:30</div>
+                                        </td>
+                                        <td class="slot normal r-63 s-15 free off-peak" type="free" slot="63"
+                                            rowspan="3">
+                                            <div class="slot-period"> 22:30</div>
+                                        </td>
+                                    </tr>
+                                    <tr utc="1756759500" data-time="22:45">
+                                        <th class="matrix-timeslot empty"></th>
+                                        <td class="slot normal r-56 s-15 closed" title="22:45 - 23:15" rowspan="2">
+                                        </td>
+                                        <td class="slot normal r-57 s-15 closed" title="22:45 - 23:15" rowspan="2">
+                                        </td>
+                                        <td class="slot normal r-58 s-15 closed" title="22:45 - 23:15" rowspan="2">
+                                        </td>
+                                        <td class="slot normal r-59 s-15 closed" title="22:45 - 23:15" rowspan="2">
+                                        </td>
+                                        <td class="slot normal r-60 s-15 closed" title="22:45 - 23:15" rowspan="2">
+                                        </td>
+                                    </tr>
+                                    <tr utc="1756760400" data-time="23:00">
+                                        <th class="matrix-timeslot empty"></th>
+                                        <td class="slot normal r-51 s-15 closed" title="23:00 - 23:15"></td>
+                                        <td class="slot normal r-52 s-15 closed" title="23:00 - 23:15"></td>
+                                        <td class="slot normal r-53 s-15 closed" title="23:00 - 23:15"></td>
+                                        <td class="slot normal r-54 s-15 closed" title="23:00 - 23:15"></td>
+                                        <td class="slot normal r-55 s-15 closed" title="23:00 - 23:15"></td>
+                                    </tr>
+                                    <tfoot class="matrix-header">
+                                    <tr class="matrix-name-row">
+                                        <th class="matrix-timeslot header-name empty"></th>
+                                        <th class="header-name  r-51 s-15"
+                                            tooltip="[T0] Baan 1:::Id 51&lt;br /&gt;Sport 15&lt;br /&gt;Guests Y&lt;br /&gt;Open set `Dal 1-5`&lt;br /&gt;Open 07:15 - 23:00&lt;br /&gt;Peaks 17:45, 22:00">
+                                            Baan 1<div class="matrix-header-force-width"></div>
+                                        </th>
+                                        <th class="header-name  r-52 s-15"
+                                            tooltip="[T0] Baan 2:::Id 52&lt;br /&gt;Sport 15&lt;br /&gt;Guests Y&lt;br /&gt;Open set `Dal 1-5`&lt;br /&gt;Open 07:15 - 23:00&lt;br /&gt;Peaks 17:45, 22:00">
+                                            Baan 2<div class="matrix-header-force-width"></div>
+                                        </th>
+                                        <th class="header-name  r-53 s-15"
+                                            tooltip="[T0] Baan 3:::Id 53&lt;br /&gt;Sport 15&lt;br /&gt;Guests Y&lt;br /&gt;Open set `Dal 1-5`&lt;br /&gt;Open 07:15 - 23:00&lt;br /&gt;Peaks 17:45, 22:00">
+                                            Baan 3<div class="matrix-header-force-width"></div>
+                                        </th>
+                                        <th class="header-name  r-54 s-15"
+                                            tooltip="[T0] Baan 4:::Id 54&lt;br /&gt;Sport 15&lt;br /&gt;Guests Y&lt;br /&gt;Open set `Dal 1-5`&lt;br /&gt;Open 07:15 - 23:00&lt;br /&gt;Peaks 17:45, 22:00">
+                                            Baan 4<div class="matrix-header-force-width"></div>
+                                        </th>
+                                        <th class="header-name  r-55 s-15"
+                                            tooltip="[T0] Baan 5:::Id 55&lt;br /&gt;Sport 15&lt;br /&gt;Guests Y&lt;br /&gt;Open set `Dal 1-5`&lt;br /&gt;Open 07:15 - 23:00&lt;br /&gt;Peaks 17:45, 22:00">
+                                            Baan 5<div class="matrix-header-force-width"></div>
+                                        </th>
+                                        <th class="header-name  r-56 s-15"
+                                            tooltip="[T0] Baan 6:::Id 56&lt;br /&gt;Sport 15&lt;br /&gt;Guests Y&lt;br /&gt;Open set `Dal 5-10`&lt;br /&gt;Open 07:45 - 22:45&lt;br /&gt;Peaks 17:30, 22:00">
+                                            Baan 6<div class="matrix-header-force-width"></div>
+                                        </th>
+                                        <th class="header-name  r-57 s-15"
+                                            tooltip="[T0] Baan 7:::Id 57&lt;br /&gt;Sport 15&lt;br /&gt;Guests Y&lt;br /&gt;Open set `Dal 5-10`&lt;br /&gt;Open 07:45 - 22:45&lt;br /&gt;Peaks 17:30, 22:00">
+                                            Baan 7<div class="matrix-header-force-width"></div>
+                                        </th>
+                                        <th class="header-name  r-58 s-15"
+                                            tooltip="[T0] Baan 8:::Id 58&lt;br /&gt;Sport 15&lt;br /&gt;Guests Y&lt;br /&gt;Open set `Dal 5-10`&lt;br /&gt;Open 07:45 - 22:45&lt;br /&gt;Peaks 17:30, 22:00">
+                                            Baan 8<div class="matrix-header-force-width"></div>
+                                        </th>
+                                        <th class="header-name  r-59 s-15"
+                                            tooltip="[T0] Baan 9:::Id 59&lt;br /&gt;Sport 15&lt;br /&gt;Guests Y&lt;br /&gt;Open set `Dal 5-10`&lt;br /&gt;Open 07:45 - 22:45&lt;br /&gt;Peaks 17:30, 22:00">
+                                            Baan 9<div class="matrix-header-force-width"></div>
+                                        </th>
+                                        <th class="header-name  r-60 s-15"
+                                            tooltip="[T0] Baan 10:::Id 60&lt;br /&gt;Sport 15&lt;br /&gt;Guests Y&lt;br /&gt;Open set `Dal 5-10`&lt;br /&gt;Open 07:45 - 22:45&lt;br /&gt;Peaks 17:30, 22:00">
+                                            Baan 10<div class="matrix-header-force-width"></div>
+                                        </th>
+                                        <th class="header-name  r-61 s-15"
+                                            tooltip="[T0] Baan 11:::Id 61&lt;br /&gt;Sport 15&lt;br /&gt;Guests Y&lt;br /&gt;Open set `Dal 11-13`&lt;br /&gt;Open 07:30 - 23:15&lt;br /&gt;Peaks 17:15, 22:00">
+                                            Baan 11<div class="matrix-header-force-width"></div>
+                                        </th>
+                                        <th class="header-name  r-62 s-15"
+                                            tooltip="[T0] Baan 12:::Id 62&lt;br /&gt;Sport 15&lt;br /&gt;Guests Y&lt;br /&gt;Open set `Dal 11-13`&lt;br /&gt;Open 07:30 - 23:15&lt;br /&gt;Peaks 17:15, 22:00">
+                                            Baan 12<div class="matrix-header-force-width"></div>
+                                        </th>
+                                        <th class="header-name  r-63 s-15"
+                                            tooltip="[T0] Baan 13:::Id 63&lt;br /&gt;Sport 15&lt;br /&gt;Guests Y&lt;br /&gt;Open set `Dal 11-13`&lt;br /&gt;Open 07:30 - 23:15&lt;br /&gt;Peaks 17:15, 22:00">
+                                            Baan 13<div class="matrix-header-force-width"></div>
+                                        </th>
+                                    </tr>
+                                    </tfoot>
+                                </table>
+                            </td>
+                        </tr>
+                    </table>
+
+                </div>
+
+
+                <script>
+                    $(function() {
+doCreateCalendar();
+redoMatrixNav();
+redoCondensedMatrix([]);
+initMatrixTable();
+initDragDropMoving();
+calendar.setSelected(window.arrCurrentDate.join('_'));
+});
+
+keepHilitingCurrentTimeSlots();
+
+calendar.setToday('2025_8_31');
+calendar.baseUrl = makeMatrixUrl('DATE');
+
+
+
+                </script>
+            </div>
+        </div>
+    </div>
+
+    <div id="left_frame_footer_content">
+        <a class="product-logo" href="https://www.i-reservations.nl/">
+            <img src="/images/company/logos/baanreserveren.nl-wit.png?v=2_9_478_1751979041" />
+        </a>
+    </div>
+</div>
+
+<div id="overlays"></div>
+
+<script>
+    rc.matrixActionToken = 'e8b7e5e6f7942030776af90e131672be0dada8d0';
+rc.canSkipMail = false;
+
+if ( navigator.serviceWorker ) {
+navigator.serviceWorker.register('/sw.js', {scope: '/'}).then(function(reg) {
+    setTimeout(function () {
+        window.sw = reg.waiting || reg.active;
+        window.fireEvent('sw-active', window.sw);
+    }, 100);
+});
+}
+</script>
+
+</body>
+
+</html>

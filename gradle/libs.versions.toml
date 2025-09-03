@@ -1,0 +1,25 @@
+[versions]
+kaml = "0.94.0"
+kotlin = "2.2.0"
+kotlinlogging = "7.0.3"
+kotlinx-coroutines = "1.10.2"
+kotlinx-serialization-core-jvm = "1.9.0"
+ktor = "3.2.3"
+skrapeit = "1.2.2"
+slf4j = "2.0.17"
+
+[libraries]
+kaml = { module = "com.charleskorn.kaml:kaml", version.ref = "kaml" }
+kotlin-test-junit = { module = "org.jetbrains.kotlin:kotlin-test-junit", version.ref = "kotlin" }
+kotlinlogging = { module = "io.github.oshai:kotlin-logging-jvm", version.ref = "kotlinlogging" }
+kotlinx-coroutines = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", version.ref = "kotlinx-coroutines" }
+kotlinx-serialization-core-jvm = { module = "org.jetbrains.kotlinx:kotlinx-serialization-core-jvm", version.ref = "kotlinx-serialization-core-jvm" }
+ktor-client-core = { module = "io.ktor:ktor-client-core", version.ref = "ktor" }
+ktor-client-logging = { module = "io.ktor:ktor-client-logging", version.ref = "ktor" }
+ktor-client-okhttp = { module = "io.ktor:ktor-client-okhttp", version.ref = "ktor" }
+skrapeit = { module = "it.skrape:skrapeit", version.ref = "skrapeit" }
+slf4j-simple = { module = "org.slf4j:slf4j-simple", version.ref = "slf4j" }
+
+[plugins]
+kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
+kotlinx-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
