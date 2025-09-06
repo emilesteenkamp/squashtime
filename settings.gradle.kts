@@ -3,8 +3,7 @@ plugins {
 }
 rootProject.name = "squashtime"
 
-include("squashtime:application")
-include("squashtime:infrastructure")
-include("squashtime:peripheral:filesystem")
-include("squashtime:peripheral:squashcity")
-include("squashtime:presentation")
+include(":squashtime:application")
+include(":squashtime:entrypoint:googlecloudfunction")
+include(":squashtime:peripheral:filesystem")
+include(":squashtime:peripheral:squashcity")

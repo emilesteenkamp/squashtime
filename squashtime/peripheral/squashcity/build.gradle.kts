@@ -12,7 +12,7 @@ dependencies {
     implementation(project(":squashtime:application"))
 
     implementation(libs.kotlinlogging)
-    implementation(libs.kotlinx.coroutines)
+    implementation(libs.kotlinx.coroutines.core)
     implementation(libs.skrapeit)
 
     testImplementation(libs.kotlin.test.junit)

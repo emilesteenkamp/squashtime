@@ -1,4 +1,4 @@
-package me.emilesteenkamp.squashtime.infrastructure
+package me.emilesteenkamp.squashtime.entrypoint.googlecloudfunction
 
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
@@ -35,7 +35,7 @@ class HttpNonBlockingFetcher(
     override val requestBuilder: Request
         get() = Request()
 
-    override suspend fun fetch(request: Request): it.skrape.fetcher.Result =
+    override suspend fun fetch(request: Request): Result =
         httpClient.request(request.toHttpRequest()).toResult()
 
     companion object {

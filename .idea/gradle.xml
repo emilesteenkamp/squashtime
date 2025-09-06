@@ -11,11 +11,11 @@
             <option value="$PROJECT_DIR$" />
             <option value="$PROJECT_DIR$/squashtime" />
             <option value="$PROJECT_DIR$/squashtime/application" />
-            <option value="$PROJECT_DIR$/squashtime/infrastructure" />
+            <option value="$PROJECT_DIR$/squashtime/entrypoint" />
+            <option value="$PROJECT_DIR$/squashtime/entrypoint/googlecloudfunction" />
             <option value="$PROJECT_DIR$/squashtime/peripheral" />
             <option value="$PROJECT_DIR$/squashtime/peripheral/filesystem" />
             <option value="$PROJECT_DIR$/squashtime/peripheral/squashcity" />
-            <option value="$PROJECT_DIR$/squashtime/presentation" />
           </set>
         </option>
       </GradleProjectSettings>
