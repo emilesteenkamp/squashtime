@@ -1,6 +1,7 @@
 [versions]
 google-cloud-function-framework-api = "1.1.4"
 google-cloud-function-invoker = "1.4.1"
+google-cloud-jib = "3.4.2"
 kaml = "0.94.0"
 kotlin = "2.2.0"
 kotlinlogging = "7.0.3"
@@ -26,5 +27,6 @@ skrapeit = { module = "it.skrape:skrapeit", version.ref = "skrapeit" }
 slf4j-simple = { module = "org.slf4j:slf4j-simple", version.ref = "slf4j" }
 
 [plugins]
+google-cloud-jib = { id = "com.google.cloud.tools.jib", version.ref = "google-cloud-jib" }
 kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
 kotlinx-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }

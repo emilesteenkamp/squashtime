@@ -13,6 +13,7 @@ import kotlinx.serialization.json.Json
 import me.emilesteenkamp.squashtime.application.domain.Player
 import me.emilesteenkamp.squashtime.application.usecase.ReserveCourtUseCase
 
+@Suppress("Unused")
 class ReserveCourtFunctionEntryPoint : HttpFunction by ReserveCourtFunction(
     json = Json,
     reserveCourtUseCase = reserveCourtUseCase
