@@ -8,8 +8,11 @@ import it.skrape.fetcher.response
 import it.skrape.fetcher.skrape
 import me.emilesteenkamp.squashtime.application.port.CourtReservationPlatform
 import me.emilesteenkamp.squashtime.application.domain.Player
+import me.tatarka.inject.annotations.Inject
 
-class SquashCityCourtReservationPlatform(
+class SquashCityCourtReservationPlatform
+@Inject
+constructor(
     private val fetcher: NonBlockingFetcher<Request>,
     private val sessionFactory: SquashCityCourtReservationPlatformSessionFactory
 ) : CourtReservationPlatform {

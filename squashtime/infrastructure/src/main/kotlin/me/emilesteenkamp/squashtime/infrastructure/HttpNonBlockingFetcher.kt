@@ -1,4 +1,4 @@
-package me.emilesteenkamp.squashtime.entrypoint.googlecloudfunction
+package me.emilesteenkamp.squashtime.infrastructure
 
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
@@ -27,9 +27,12 @@ import it.skrape.fetcher.SameSite
 import it.skrape.fetcher.urlOrigin
 import kotlin.collections.component1
 import kotlin.collections.component2
+import me.tatarka.inject.annotations.Inject
 
 @OptIn(InternalAPI::class)
-class HttpNonBlockingFetcher(
+internal class HttpNonBlockingFetcher
+@Inject
+constructor(
     val httpClient: HttpClient
 ) : NonBlockingFetcher<Request> {
     override val requestBuilder: Request

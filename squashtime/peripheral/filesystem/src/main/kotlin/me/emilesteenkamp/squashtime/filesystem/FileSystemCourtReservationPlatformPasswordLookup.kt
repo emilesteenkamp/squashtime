@@ -1,25 +1,28 @@
 package me.emilesteenkamp.squashtime.filesystem
 
 import com.charleskorn.kaml.Yaml
-import java.io.File
-import java.net.URL
+import java.io.InputStream
+import java.nio.charset.StandardCharsets
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.decodeFromString
 import me.emilesteenkamp.squashtime.application.domain.Player
 import me.emilesteenkamp.squashtime.application.port.CourtReservationPlatform
 import me.emilesteenkamp.squashtime.application.port.CourtReservationPlatformPasswordLookup
+import me.tatarka.inject.annotations.Inject
 
-class FileSystemCourtReservationPlatformPasswordLookup(
-    file: File,
+class FileSystemCourtReservationPlatformPasswordLookup
+@Inject
+constructor(
+    credentialsInputStream: CourtReservationPlatformCredentialsInputStream,
     val yaml: Yaml
 ) : CourtReservationPlatformPasswordLookup {
-    val lookup = file.parseLookup()
+    val lookup = credentialsInputStream.parseLookup()
 
     override suspend fun find(playerUserName: Player.UserName): CourtReservationPlatform.Password? =
         lookup[playerUserName.value]?.let { CourtReservationPlatform.Password(it) }
 
-    fun File.parseLookup(): Map<String, String> = yaml
-        .decodeFromString<SerializedPasswordLookup>(readText())
+    fun CourtReservationPlatformCredentialsInputStream.parseLookup(): Map<String, String> = yaml
+        .decodeFromString<SerializedPasswordLookup>(use { readBytes().toString(StandardCharsets.UTF_8) })
         .credentials
         .fold(emptyMap()) {
             acc, credential -> acc + (credential.username to credential.password)
@@ -37,16 +40,4 @@ class FileSystemCourtReservationPlatformPasswordLookup(
     }
 }
 
-suspend fun main() {
-    val file = FileSystemCourtReservationPlatformPasswordLookup::class.java
-        .getResource("/squash-city-credentials-lookup.yaml")!!
-        .toFile()
-
-
-    FileSystemCourtReservationPlatformPasswordLookup(
-        file = file,
-        yaml = Yaml.default
-    ).also { println(it.find(Player.UserName("emile@steenkamps.org"))!!.value) }
-}
-
-fun URL.toFile(): File = File(this.file)
+typealias CourtReservationPlatformCredentialsInputStream = InputStream

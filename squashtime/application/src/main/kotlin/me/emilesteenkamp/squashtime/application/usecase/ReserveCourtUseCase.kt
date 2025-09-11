@@ -6,8 +6,11 @@ import me.emilesteenkamp.squashtime.application.domain.Player
 import me.emilesteenkamp.squashtime.application.domain.Timeslot
 import me.emilesteenkamp.squashtime.application.port.CourtReservationPlatform
 import me.emilesteenkamp.squashtime.application.port.CourtReservationPlatformPasswordLookup
+import me.tatarka.inject.annotations.Inject
 
-class ReserveCourtUseCase(
+class ReserveCourtUseCase
+@Inject
+constructor(
     private val courtReservationPlatform: CourtReservationPlatform,
     private val courtReservationPlatformPasswordLookup: CourtReservationPlatformPasswordLookup,
 ) {

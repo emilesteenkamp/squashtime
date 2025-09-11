@@ -11,6 +11,7 @@ repositories {
 dependencies {
     implementation(project(":squashtime:application"))
 
+    implementation(libs.kotlininject.runtime)
     implementation(libs.kotlinlogging)
     implementation(libs.kotlinx.coroutines.core)
     implementation(libs.skrapeit)

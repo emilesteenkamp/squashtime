@@ -14,19 +14,13 @@ val invoker: Configuration by configurations.creating
 
 dependencies {
     implementation(project(":squashtime:application"))
-    implementation(project(":squashtime:peripheral:filesystem"))
-    implementation(project(":squashtime:peripheral:squashcity"))
+    implementation(project(":squashtime:infrastructure"))
 
     implementation(libs.google.cloud.function.framework.api)
     implementation(libs.google.cloud.function.invoker)
-    implementation(libs.kaml)
     implementation(libs.kotlinlogging)
+    implementation(libs.kotlinx.coroutines.core)
     implementation(libs.kotlinx.serialization.json)
-    implementation(libs.ktor.client.core)
-    implementation(libs.ktor.client.logging)
-    implementation(libs.ktor.client.okhttp)
-    implementation(libs.skrapeit)
-    implementation(libs.slf4j.simple)
 
     invoker(libs.google.cloud.function.invoker)
 }

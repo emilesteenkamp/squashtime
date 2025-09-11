@@ -12,21 +12,22 @@ import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json
 import me.emilesteenkamp.squashtime.application.domain.Player
 import me.emilesteenkamp.squashtime.application.usecase.ReserveCourtUseCase
+import me.emilesteenkamp.squashtime.infrastructure.infrastructure
 
 @Suppress("Unused")
 class ReserveCourtFunctionEntryPoint : HttpFunction by ReserveCourtFunction(
-    json = Json,
-    reserveCourtUseCase = reserveCourtUseCase
+    reserveCourtUseCase = infrastructure.reserveCourtUseCase,
+    json = infrastructure.json
 )
 
 class ReserveCourtFunction(
+    private val reserveCourtUseCase: ReserveCourtUseCase,
     private val json: Json,
-    private val reserveCourtUseCase: ReserveCourtUseCase
 ) : HttpFunction, CloudEventsFunction {
     override fun service(
         request: HttpRequest,
         response: HttpResponse
-    ) =runBlocking {
+    ) = runBlocking {
         val reserveCourtRequestSerial = request.decodeToSerial<ReserveCourtRequestSerial>()
 
         logger.info { "Accepted request with serial $reserveCourtRequestSerial" }
@@ -75,30 +76,30 @@ class ReserveCourtFunction(
             /* second = */ this.second
         )
 
-    companion object {
-        val logger = KotlinLogging.logger {  }
+    @Serializable
+    data class ReserveCourtRequestSerial(
+        val player: PlayerSerial,
+        val additionalPlayerIdentifierList: List<String>,
+        val dateTime: DateTimeSerial
+    ) {
+        @Serializable
+        data class PlayerSerial(
+            val identifier: String,
+            val userName: String
+        )
+
+        @Serializable
+        data class DateTimeSerial(
+            val year: Int,
+            val month: Int,
+            val day: Int,
+            val hour: Int,
+            val minute: Int,
+            val second: Int
+        )
     }
-}
 
-@Serializable
-data class ReserveCourtRequestSerial(
-    val player: PlayerSerial,
-    val additionalPlayerIdentifierList: List<String>,
-    val dateTime: DateTimeSerial
-) {
-    @Serializable
-    data class PlayerSerial(
-        val identifier: String,
-        val userName: String
-    )
-
-    @Serializable
-    data class DateTimeSerial(
-        val year: Int,
-        val month: Int,
-        val day: Int,
-        val hour: Int,
-        val minute: Int,
-        val second: Int
-    )
+    companion object {
+        private val logger = KotlinLogging.logger {}
+    }
 }

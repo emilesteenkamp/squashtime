@@ -9,6 +9,7 @@ repositories {
 }
 
 dependencies {
+    implementation(libs.kotlininject.runtime)
     implementation(libs.kotlinlogging)
 
     testImplementation(libs.kotlin.test.junit)

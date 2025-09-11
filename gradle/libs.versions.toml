@@ -2,8 +2,10 @@
 google-cloud-function-framework-api = "1.1.4"
 google-cloud-function-invoker = "1.4.1"
 google-cloud-jib = "3.4.2"
+google-devtools-ksp = "2.2.10-2.0.2"
 kaml = "0.94.0"
-kotlin = "2.2.0"
+kotlin = "2.2.10"
+kotlininject = "0.8.0"
 kotlinlogging = "7.0.3"
 kotlinx-coroutines = "1.10.2"
 kotlinx-serialization = "1.9.0"
@@ -16,6 +18,8 @@ google-cloud-function-framework-api = { module = "com.google.cloud.functions:fun
 google-cloud-function-invoker = { module = "com.google.cloud.functions.invoker:java-function-invoker", version.ref = "google-cloud-function-invoker" }
 kaml = { module = "com.charleskorn.kaml:kaml", version.ref = "kaml" }
 kotlin-test-junit = { module = "org.jetbrains.kotlin:kotlin-test-junit", version.ref = "kotlin" }
+kotlininject-compiler-ksp = { module = "me.tatarka.inject:kotlin-inject-compiler-ksp", version.ref = "kotlininject" }
+kotlininject-runtime = { module = "me.tatarka.inject:kotlin-inject-runtime", version.ref = "kotlininject" }
 kotlinlogging = { module = "io.github.oshai:kotlin-logging-jvm", version.ref = "kotlinlogging" }
 kotlinx-coroutines-core = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", version.ref = "kotlinx-coroutines" }
 kotlinx-serialization-core-jvm = { module = "org.jetbrains.kotlinx:kotlinx-serialization-core-jvm", version.ref = "kotlinx-serialization" }
@@ -28,5 +32,6 @@ slf4j-simple = { module = "org.slf4j:slf4j-simple", version.ref = "slf4j" }
 
 [plugins]
 google-cloud-jib = { id = "com.google.cloud.tools.jib", version.ref = "google-cloud-jib" }
+google-devtools-ksp = { id = "com.google.devtools.ksp", version.ref = "google-devtools-ksp" }
 kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
 kotlinx-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
