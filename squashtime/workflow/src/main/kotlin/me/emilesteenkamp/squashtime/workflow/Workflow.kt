@@ -40,15 +40,15 @@ private constructor(
     private fun State.Transient.unsafeCast(): TRANSIENT_STATE = this as TRANSIENT_STATE
 
     private class Graph<TRANSIENT_STATE, FINALISED_STATE>(
-        private val linkedHashMap: LinkedHashMap<Step<*, *>, StepRunner<TRANSIENT_STATE, FINALISED_STATE, *, *>>
+        private val map: LinkedHashMap<Step<*, *>, StepRunner<TRANSIENT_STATE, FINALISED_STATE, *, *>>
     ) where TRANSIENT_STATE : State.Transient,
             FINALISED_STATE : State.Final
     {
         fun initialStep(): Step<Any, Any>? =
-            linkedHashMap.entries.firstOrNull()?.key?.unsafeCast()
+            map.entries.firstOrNull()?.key?.unsafeCast()
 
         fun runnerFor(step: Step<*, *>): StepRunner<TRANSIENT_STATE, FINALISED_STATE, Any, Any>? =
-            linkedHashMap.get(step)?.unsafeCast()
+            map.get(step)?.unsafeCast()
 
         @Suppress("UNCHECKED_CAST")
         private fun Step<*, *>.unsafeCast(): Step<Any, Any> =
@@ -75,16 +75,16 @@ private constructor(
             where TRANSIENT_STATE : State.Transient,
                   FINALISED_STATE : State.Final
     {
-        private val graph = linkedMapOf<Step<*, *>, StepRunner<TRANSIENT_STATE, FINALISED_STATE, *, *>>()
+        private val graphBuilder = linkedMapOf<Step<*, *>, StepRunnerDefinition<TRANSIENT_STATE, FINALISED_STATE, *, *>>()
 
-        fun <INPUT, OUTPUT, NEXT_INPUT, NEXT_OUTPUT> step(
+        fun <INPUT, OUTPUT> step(
             step: Step<INPUT, OUTPUT>,
             collector: (TRANSIENT_STATE) -> INPUT,
-            modifier: (TRANSIENT_STATE, OUTPUT) -> State,
-            determiner: (TRANSIENT_STATE) -> Step<NEXT_INPUT, NEXT_OUTPUT>,
+            modifier: ((TRANSIENT_STATE, OUTPUT) -> State)? = null,
+            determiner: ((TRANSIENT_STATE) -> Step<*, *>)? = null,
             performer: suspend (INPUT) -> OUTPUT
         ) {
-            graph[step] = StepRunner(
+            graphBuilder[step] = StepRunnerDefinition(
                 collector = collector,
                 modifier = modifier,
                 determiner = determiner,
@@ -92,9 +92,35 @@ private constructor(
             )
         }
 
+        @Suppress("UNCHECKED_CAST")
         internal fun build(): Workflow<TRANSIENT_STATE, FINALISED_STATE> {
-            return Workflow(Graph(graph))
+            val graphMap = linkedMapOf<Step<*, *>, StepRunner<TRANSIENT_STATE, FINALISED_STATE, *, *>>()
+
+            graphBuilder.sequencedEntrySet().forEachIndexed { index, entry ->
+                graphMap[entry.key] = StepRunner(
+                    collector = entry.value.collector as (TRANSIENT_STATE) -> Any,
+                    modifier = (entry.value.modifier ?: { state, _ -> state }) as (TRANSIENT_STATE, Any) -> State,
+                    determiner = entry.value.determiner ?: { _ ->
+                        graphBuilder
+                            .sequencedEntrySet()
+                            .elementAtOrNull(index + 1)
+                            ?.key
+                            ?: Step.None
+                   },
+                    performer = entry.value.performer as suspend (Any) -> Any
+                )
+            }
+
+            return Workflow(Graph(graphMap))
         }
+
+        private data class StepRunnerDefinition<TRANSIENT_STATE, FINALISED_STATE, INPUT, OUTPUT>(
+            val collector: (TRANSIENT_STATE) -> INPUT,
+            val modifier: ((TRANSIENT_STATE, OUTPUT) -> State)? = null,
+            val determiner: ((TRANSIENT_STATE) -> (Step<*, *>))? = null,
+            val performer: suspend (INPUT) -> OUTPUT
+        ) where TRANSIENT_STATE : State.Transient,
+                FINALISED_STATE : State.Final
     }
 
     private data class StepRunner<TRANSIENT_STATE, FINALISED_STATE, INPUT, OUTPUT>(

@@ -50,7 +50,6 @@ constructor(
             modifier = { state, isNumberOfAdditionalPlayersAllowed ->
                 if (isNumberOfAdditionalPlayersAllowed) state else State.Final.Error.InvalidNumberOfAdditionalPlayers
             },
-            determiner = { DeterminePassword },
         ) { input ->
             input.additionalPlayerIdentifierSet.size in 1..3
         }
@@ -64,7 +63,6 @@ constructor(
                     DeterminePassword.Output.NotFound -> State.Final.Error.PasswordNotFound
                 }
            },
-            determiner = { StartSession }
         ) { input ->
             val password = courtReservationPlatformPasswordLookup.find(input.player.userName)
 
@@ -84,7 +82,6 @@ constructor(
                     StartSession.Output.Failed -> State.Final.Error.AuthenticationFailed
                 }
             },
-            determiner = { FetchSchedule }
         ) { input ->
             when (val result = courtReservationPlatform.authenticate(input.player, input.password)) {
                 is CourtReservationPlatform.AuthenticateResult.Success -> StartSession.Output.Success(result.session)
@@ -106,7 +103,6 @@ constructor(
                     FetchSchedule.Output.Failed -> State.Final.Error.FailedToFetchSchedule
                 }
             },
-            determiner = { FindTimeslot }
         ) { input ->
             when (val result = input.session.fetchSchedule(date = input.requestedDate)) {
                 is CourtReservationPlatform.Session.FetchScheduleResult.Success -> FetchSchedule.Output.Success(result.schedule)
@@ -128,7 +124,6 @@ constructor(
                     FindTimeslot.Output.NotFound -> State.Final.Error.NoTimeslotAvailable
                 }
             },
-            determiner = { ReserveCourt }
         ) { input ->
             val courtTimeslot = input.schedule.firstNotNullOfOrNull { (courtIdentifier, timeslotList) ->
                 val timeslot = timeslotList.find { it.time.compareTo(input.requestedTime) == 0 }
@@ -158,7 +153,6 @@ constructor(
                     ReserveCourt.Output.Failed -> State.Final.Error.CourtReservationFailed
                 }
             },
-            determiner = { Workflow.Step.None },
         ) { input ->
             when (
                 input.session.reserveCourt(
