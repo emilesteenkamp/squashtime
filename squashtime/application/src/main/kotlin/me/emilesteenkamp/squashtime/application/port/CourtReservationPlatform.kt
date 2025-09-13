@@ -39,5 +39,9 @@ interface CourtReservationPlatform {
     }
 
     @JvmInline
-    value class Password(val value: String)
+    value class Password(val value: String) {
+        override fun toString(): String {
+            return "Password(value=${"*".repeat(value.length)})"
+        }
+    }
 }
