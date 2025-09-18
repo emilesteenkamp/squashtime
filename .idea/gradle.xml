@@ -17,6 +17,7 @@
             <option value="$PROJECT_DIR$/squashtime/peripheral" />
             <option value="$PROJECT_DIR$/squashtime/peripheral/filesystem" />
             <option value="$PROJECT_DIR$/squashtime/peripheral/squashcity" />
+            <option value="$PROJECT_DIR$/squashtime/workflow" />
           </set>
         </option>
       </GradleProjectSettings>

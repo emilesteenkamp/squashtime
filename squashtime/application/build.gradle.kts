@@ -9,6 +9,8 @@ repositories {
 }
 
 dependencies {
+    api(project(":squashtime:workflow"))
+
     implementation(libs.kotlininject.runtime)
     implementation(libs.kotlinlogging)
 

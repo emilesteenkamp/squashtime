@@ -32,11 +32,23 @@ class ReserveCourtFunction(
 
         logger.info { "Accepted request with serial $reserveCourtRequestSerial" }
 
-        reserveCourtUseCase.invoke(
-            player = reserveCourtRequestSerial.player.toPlayer(),
-            additionalPlayerIdentifierSet = reserveCourtRequestSerial.additionalPlayerIdentifierList.map { Player.Identifier(it) }.toSet(),
-            requestedDateTime = reserveCourtRequestSerial.dateTime.toLocalDateTime()
-        )
+        when (
+            reserveCourtUseCase.invoke(
+                ReserveCourtUseCase.State.Transient(
+                    player = reserveCourtRequestSerial.player.toPlayer(),
+                    additionalPlayerIdentifierSet = reserveCourtRequestSerial.additionalPlayerIdentifierList.map { Player.Identifier(it) }.toSet(),
+                    requestedDateTime = reserveCourtRequestSerial.dateTime.toLocalDateTime()
+                )
+            )
+        ) {
+            ReserveCourtUseCase.State.Final.Success -> response.setStatusCode(200)
+            ReserveCourtUseCase.State.Final.Error.AuthenticationFailed,
+            ReserveCourtUseCase.State.Final.Error.CourtReservationFailed,
+            ReserveCourtUseCase.State.Final.Error.FailedToFetchSchedule,
+            ReserveCourtUseCase.State.Final.Error.InvalidNumberOfAdditionalPlayers,
+            ReserveCourtUseCase.State.Final.Error.NoTimeslotAvailable,
+            ReserveCourtUseCase.State.Final.Error.PasswordNotFound -> response.setStatusCode(400)
+        }
     }
 
     private inline fun <reified SERIAL> HttpRequest.decodeToSerial(): SERIAL =
@@ -47,11 +59,23 @@ class ReserveCourtFunction(
 
         logger.info { "Accepted event with serial $reserveCourtRequestSerial" }
 
-        reserveCourtUseCase.invoke(
-            player = reserveCourtRequestSerial.player.toPlayer(),
-            additionalPlayerIdentifierSet = reserveCourtRequestSerial.additionalPlayerIdentifierList.map { Player.Identifier(it) }.toSet(),
-            requestedDateTime = reserveCourtRequestSerial.dateTime.toLocalDateTime()
-        )
+        when (
+            reserveCourtUseCase.invoke(
+                ReserveCourtUseCase.State.Transient(
+                    player = reserveCourtRequestSerial.player.toPlayer(),
+                    additionalPlayerIdentifierSet = reserveCourtRequestSerial.additionalPlayerIdentifierList.map { Player.Identifier(it) }.toSet(),
+                    requestedDateTime = reserveCourtRequestSerial.dateTime.toLocalDateTime()
+                )
+            )
+        ) {
+            ReserveCourtUseCase.State.Final.Success -> {}
+            ReserveCourtUseCase.State.Final.Error.AuthenticationFailed,
+            ReserveCourtUseCase.State.Final.Error.CourtReservationFailed,
+            ReserveCourtUseCase.State.Final.Error.FailedToFetchSchedule,
+            ReserveCourtUseCase.State.Final.Error.InvalidNumberOfAdditionalPlayers,
+            ReserveCourtUseCase.State.Final.Error.NoTimeslotAvailable,
+            ReserveCourtUseCase.State.Final.Error.PasswordNotFound -> error("Failed to reserve court.")
+        }
     }
 
     private inline fun <reified SERIAL> CloudEvent.decodeToSerial(): SERIAL =
