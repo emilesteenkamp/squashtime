@@ -1,4 +1,4 @@
-package me.emilesteenkamp.squashtime.entrypoint.googlecloudfunction
+package me.emilesteenkamp.squashtime.entrypoint.googlecloudfunction.reservecourt.oneweeklater
 
 import com.google.cloud.functions.CloudEventsFunction
 import com.google.cloud.functions.HttpFunction
@@ -6,7 +6,9 @@ import com.google.cloud.functions.HttpRequest
 import com.google.cloud.functions.HttpResponse
 import io.cloudevents.CloudEvent
 import io.github.oshai.kotlinlogging.KotlinLogging
+import java.time.LocalDate
 import java.time.LocalDateTime
+import java.time.LocalTime
 import kotlinx.coroutines.runBlocking
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json
@@ -15,7 +17,7 @@ import me.emilesteenkamp.squashtime.application.usecase.ReserveCourtUseCase
 import me.emilesteenkamp.squashtime.infrastructure.infrastructure
 
 @Suppress("Unused")
-class ReserveCourtFunctionEntryPoint : HttpFunction by ReserveCourtFunction(
+class ReserveCourtOneWeekLaterFunctionEntryPoint : HttpFunction by ReserveCourtFunction(
     reserveCourtUseCase = infrastructure.reserveCourtUseCase,
     json = infrastructure.json
 )
@@ -37,8 +39,9 @@ class ReserveCourtFunction(
                 ReserveCourtUseCase.State.Transient(
                     player = reserveCourtRequestSerial.player.toPlayer(),
                     additionalPlayerIdentifierSet = reserveCourtRequestSerial.additionalPlayerIdentifierList.map { Player.Identifier(it) }.toSet(),
-                    requestedDateTime = reserveCourtRequestSerial.dateTime.toLocalDateTime()
-                )
+                    requestedDateTime = reserveCourtRequestSerial.time
+                        .toLocalTime()
+                        .atDate(LocalDate.now().plusWeeks(1))                )
             )
         ) {
             ReserveCourtUseCase.State.Final.Success -> response.setStatusCode(200)
@@ -64,7 +67,9 @@ class ReserveCourtFunction(
                 ReserveCourtUseCase.State.Transient(
                     player = reserveCourtRequestSerial.player.toPlayer(),
                     additionalPlayerIdentifierSet = reserveCourtRequestSerial.additionalPlayerIdentifierList.map { Player.Identifier(it) }.toSet(),
-                    requestedDateTime = reserveCourtRequestSerial.dateTime.toLocalDateTime()
+                    requestedDateTime = reserveCourtRequestSerial.time
+                        .toLocalTime()
+                        .atDate(LocalDate.now().plusWeeks(1))
                 )
             )
         ) {
@@ -90,11 +95,8 @@ class ReserveCourtFunction(
         )
     }
 
-    private fun ReserveCourtRequestSerial.DateTimeSerial.toLocalDateTime(): LocalDateTime = LocalDateTime
+    private fun ReserveCourtRequestSerial.TimeSerial.toLocalTime(): LocalTime = LocalTime
         .of(
-            /* year = */ this.year,
-            /* month = */ this.month,
-            /* dayOfMonth = */ this.day,
             /* hour = */ this.hour,
             /* minute = */ this.minute,
             /* second = */ this.second
@@ -104,7 +106,7 @@ class ReserveCourtFunction(
     data class ReserveCourtRequestSerial(
         val player: PlayerSerial,
         val additionalPlayerIdentifierList: List<String>,
-        val dateTime: DateTimeSerial
+        val time: TimeSerial
     ) {
         @Serializable
         data class PlayerSerial(
@@ -113,10 +115,7 @@ class ReserveCourtFunction(
         )
 
         @Serializable
-        data class DateTimeSerial(
-            val year: Int,
-            val month: Int,
-            val day: Int,
+        data class TimeSerial(
             val hour: Int,
             val minute: Int,
             val second: Int
