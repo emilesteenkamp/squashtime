@@ -1,5 +1,8 @@
 package me.emilesteenkamp.squashtime.infrstructure.test
 
+import kotlin.reflect.KProperty
+import kotlinx.coroutines.test.runTest
+import kotlinx.coroutines.test.TestScope as TestCoroutineScope
 import me.emilesteenkamp.squashtime.application.port.CourtReservationPlatform
 import me.emilesteenkamp.squashtime.application.port.CourtReservationPlatformPasswordLookup
 import me.emilesteenkamp.squashtime.application.usecase.ReserveCourtUseCase
@@ -11,7 +14,11 @@ import me.tatarka.inject.annotations.Provides
 
 @TestScope
 @Component
-abstract class TestInfrastructure {
+abstract class TestInfrastructure(
+    @get:Provides
+    @Suppress("Unused")
+    protected val testScope: TestCoroutineScope
+) {
     abstract val reserveCourtUseCase: ReserveCourtUseCase
     abstract val mockCourtReservationPlatformDataSource: MockCourtReservationPlatform.DataSource
 

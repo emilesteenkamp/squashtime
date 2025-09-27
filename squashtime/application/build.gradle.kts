@@ -15,10 +15,6 @@ dependencies {
     implementation(libs.kotlinlogging)
 
     testImplementation(project(":squashtime:infrastructure:test"))
-
-    testImplementation(libs.kotest.assertions.core)
-    testImplementation(libs.kotlin.test.junit)
-    testImplementation(libs.kotlinx.coroutines.test)
 }
 
 kotlin {

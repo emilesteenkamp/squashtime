@@ -10,6 +10,10 @@ repositories {
 }
 
 dependencies {
+    api(libs.kotest.assertions.core)
+    api(libs.kotlin.test.junit)
+    api(libs.kotlinx.coroutines.test)
+
     implementation(project(":squashtime:application"))
 
     implementation(libs.kotlininject.runtime)

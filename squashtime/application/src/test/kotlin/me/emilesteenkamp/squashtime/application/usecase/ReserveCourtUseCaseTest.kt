@@ -5,25 +5,21 @@ import io.kotest.matchers.types.shouldBeInstanceOf
 import java.time.LocalDate
 import kotlin.uuid.ExperimentalUuidApi
 import kotlin.uuid.Uuid
-import kotlinx.coroutines.test.runTest
 import me.emilesteenkamp.squashtime.application.domain.Player
-import me.emilesteenkamp.squashtime.infrstructure.test.TestInfrastructure
-import me.emilesteenkamp.squashtime.infrstructure.test.create
+import me.emilesteenkamp.squashtime.infrstructure.test.api.runWithTestInfrastructure
 import org.junit.Test
 
 @OptIn(ExperimentalUuidApi::class)
 class ReserveCourtUseCaseTest {
     @Test
-    fun `Reserve a court`() = runTest {
+    fun `Reserve a court`() = runWithTestInfrastructure {
         // Given.
-        val testInfrastructure = TestInfrastructure::class.create()
-        val reserveCourtUseCase = testInfrastructure.reserveCourtUseCase
         val input = ReserveCourtUseCase.State.Transient(
             player = Player(
                 identifier = Player.Identifier(Uuid.random().toHexString()),
                 userName = Player.UserName("user1")
             ),
-            additionalPlayerIdentifierSet = setOf(Player.Identifier("")),
+            additionalPlayerIdentifierSet = setOf(Player.Identifier(Uuid.random().toHexString())),
             requestedDateTime = LocalDate.now()
                 .plusDays(5)
                 .atTime(/* hour = */ 14, /* minute = */ 0)
@@ -34,8 +30,7 @@ class ReserveCourtUseCaseTest {
 
         // Then.
         val success = output.shouldBeInstanceOf<ReserveCourtUseCase.State.Final.Success>()
-        testInfrastructure
-            .mockCourtReservationPlatformDataSource
+        mockCourtReservationPlatformDataSource
             .dateToScheduleMap[input.requestedDateTime.toLocalDate()]
             .shouldNotBeNull()[success.bookedCourtIdentifier]
             .shouldNotBeNull()
