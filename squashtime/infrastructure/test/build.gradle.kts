@@ -1,5 +1,6 @@
 plugins {
     alias(libs.plugins.kotlin.jvm)
+    alias(libs.plugins.google.devtools.ksp)
 }
 
 group = "me.emilesteenkamp"
@@ -12,11 +13,9 @@ dependencies {
     implementation(project(":squashtime:application"))
 
     implementation(libs.kotlininject.runtime)
-    implementation(libs.kotlinlogging)
-    implementation(libs.kotlinx.coroutines.core)
-    implementation(libs.skrapeit)
+    implementation(libs.slf4j.simple)
 
-    testImplementation(libs.kotlin.test.junit)
+    ksp(libs.kotlininject.compiler.ksp)
 }
 
 kotlin {

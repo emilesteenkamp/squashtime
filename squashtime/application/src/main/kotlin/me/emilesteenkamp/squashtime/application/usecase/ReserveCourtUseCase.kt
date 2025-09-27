@@ -1,8 +1,5 @@
 package me.emilesteenkamp.squashtime.application.usecase
 
-import java.time.LocalDate
-import java.time.LocalDateTime
-import java.time.LocalTime
 import me.emilesteenkamp.squashtime.application.domain.CourtIdentifier
 import me.emilesteenkamp.squashtime.application.domain.Player
 import me.emilesteenkamp.squashtime.application.domain.Schedule
@@ -12,227 +9,262 @@ import me.emilesteenkamp.squashtime.application.port.CourtReservationPlatformPas
 import me.emilesteenkamp.squashtime.application.usecase.base.WorkflowUseCase
 import me.emilesteenkamp.squashtime.workflow.Workflow
 import me.tatarka.inject.annotations.Inject
+import java.time.LocalDate
+import java.time.LocalDateTime
+import java.time.LocalTime
 
 class ReserveCourtUseCase
-@Inject
-constructor(
-    private val courtReservationPlatform: CourtReservationPlatform,
-    private val courtReservationPlatformPasswordLookup: CourtReservationPlatformPasswordLookup,
-) : WorkflowUseCase<ReserveCourtUseCase.State.Transient, ReserveCourtUseCase.State.Final>() {
-    object State {
-        data class Transient(
-            val player: Player,
-            val additionalPlayerIdentifierSet: Set<Player.Identifier>,
-            val requestedDateTime: LocalDateTime,
-            val password: CourtReservationPlatform.Password? = null,
-            val session: CourtReservationPlatform.Session? = null,
-            val schedule: Schedule? = null,
-            val courtTimeslot: CourtTimeslot? = null,
-        ) : Workflow.State.Transient
-
-        sealed interface Final : Workflow.State.Final {
-            data object Success : Final
-            sealed interface Error : Final {
-                data object InvalidNumberOfAdditionalPlayers : Error
-                data object PasswordNotFound : Error
-                data object AuthenticationFailed : Error
-                data object FailedToFetchSchedule : Error
-                data object NoTimeslotAvailable : Error
-                data object CourtReservationFailed : Error
-            }
-        }
-    }
-
-    override val workflow = Workflow.define<State.Transient, State.Final> {
-        step(
-            IsNumberOfAdditionalPlayersAllowed,
-            collector = { state -> IsNumberOfAdditionalPlayersAllowed.Input(state.additionalPlayerIdentifierSet) },
-            modifier = { state, isNumberOfAdditionalPlayersAllowed ->
-                if (isNumberOfAdditionalPlayersAllowed) state else State.Final.Error.InvalidNumberOfAdditionalPlayers
-            },
-        ) { input ->
-            input.additionalPlayerIdentifierSet.size in 1..3
-        }
-
-        step(
-            DeterminePassword,
-            collector = { state -> DeterminePassword.Input(state.player) },
-            modifier = { state, output ->
-                when (output) {
-                    is DeterminePassword.Output.Success -> state.copy(password = output.password)
-                    DeterminePassword.Output.NotFound -> State.Final.Error.PasswordNotFound
+    @Inject
+    constructor(
+        private val courtReservationPlatform: CourtReservationPlatform,
+        private val courtReservationPlatformPasswordLookup: CourtReservationPlatformPasswordLookup,
+    ) : WorkflowUseCase<ReserveCourtUseCase.State.Transient, ReserveCourtUseCase.State.Final>() {
+        override val workflow =
+            Workflow.define<State.Transient, State.Final> {
+                step(
+                    IsNumberOfAdditionalPlayersAllowed,
+                    collector = { state -> IsNumberOfAdditionalPlayersAllowed.Input(state.additionalPlayerIdentifierSet) },
+                    modifier = { state, isNumberOfAdditionalPlayersAllowed ->
+                        if (isNumberOfAdditionalPlayersAllowed) state else State.Final.Error.InvalidNumberOfAdditionalPlayers
+                    },
+                ) { input ->
+                    input.additionalPlayerIdentifierSet.size in 1..3
                 }
-           },
-        ) { input ->
-            val password = courtReservationPlatformPasswordLookup.find(input.player.userName)
 
-            if (password != null) {
-                DeterminePassword.Output.Success(password = password)
-            } else {
-                DeterminePassword.Output.NotFound
-            }
-        }
+                step(
+                    DeterminePassword,
+                    collector = { state -> DeterminePassword.Input(state.player) },
+                    modifier = { state, output ->
+                        when (output) {
+                            is DeterminePassword.Output.Success -> state.copy(password = output.password)
+                            DeterminePassword.Output.NotFound -> State.Final.Error.PasswordNotFound
+                        }
+                    },
+                ) { input ->
+                    val password = courtReservationPlatformPasswordLookup.find(input.player.userName)
 
-        step(
-            StartSession,
-            collector = { state -> StartSession.Input(state.player, state.password!!) },
-            modifier = { state, output ->
-                when (output) {
-                    is StartSession.Output.Success -> state.copy(session = output.session)
-                    StartSession.Output.Failed -> State.Final.Error.AuthenticationFailed
+                    if (password != null) {
+                        DeterminePassword.Output.Success(password = password)
+                    } else {
+                        DeterminePassword.Output.NotFound
+                    }
                 }
-            },
-        ) { input ->
-            when (val result = courtReservationPlatform.authenticate(input.player, input.password)) {
-                is CourtReservationPlatform.AuthenticateResult.Success -> StartSession.Output.Success(result.session)
-                CourtReservationPlatform.AuthenticateResult.Failed -> StartSession.Output.Failed
-            }
-        }
 
-        step(
-            FetchSchedule,
-            collector = { state ->
-                FetchSchedule.Input(
-                    session = state.session!!,
-                    requestedDate = state.requestedDateTime.toLocalDate()
-                )
-            },
-            modifier = { state, output ->
-                when (output) {
-                    is FetchSchedule.Output.Success -> state.copy(schedule = output.schedule)
-                    FetchSchedule.Output.Failed -> State.Final.Error.FailedToFetchSchedule
+                step(
+                    StartSession,
+                    collector = { state -> StartSession.Input(state.player, state.password.requireNotNull()) },
+                    modifier = { state, output ->
+                        when (output) {
+                            is StartSession.Output.Success -> state.copy(session = output.session)
+                            StartSession.Output.Failed -> State.Final.Error.AuthenticationFailed
+                        }
+                    },
+                ) { input ->
+                    when (val result = courtReservationPlatform.authenticate(input.player, input.password)) {
+                        is CourtReservationPlatform.AuthenticateResult.Success -> StartSession.Output.Success(result.session)
+                        CourtReservationPlatform.AuthenticateResult.Failed -> StartSession.Output.Failed
+                    }
                 }
-            },
-        ) { input ->
-            when (val result = input.session.fetchSchedule(date = input.requestedDate)) {
-                is CourtReservationPlatform.Session.FetchScheduleResult.Success -> FetchSchedule.Output.Success(result.schedule)
-                CourtReservationPlatform.Session.FetchScheduleResult.Failed -> FetchSchedule.Output.Failed
-            }
-        }
 
-        step(
-            FindTimeslot,
-            collector = { state ->
-                FindTimeslot.Input(
-                    schedule = state.schedule!!,
-                    requestedTime = state.requestedDateTime.toLocalTime()
-                )
-            },
-            modifier = { state, output ->
-                when (output) {
-                    is FindTimeslot.Output.Success -> state.copy(courtTimeslot = output.courtTimeslot)
-                    FindTimeslot.Output.NotFound -> State.Final.Error.NoTimeslotAvailable
+                step(
+                    FetchSchedule,
+                    collector = { state ->
+                        FetchSchedule.Input(
+                            session = state.session.requireNotNull(),
+                            requestedDate = state.requestedDateTime.toLocalDate(),
+                        )
+                    },
+                    modifier = { state, output ->
+                        when (output) {
+                            is FetchSchedule.Output.Success -> state.copy(schedule = output.schedule)
+                            FetchSchedule.Output.Failed -> State.Final.Error.FailedToFetchSchedule
+                        }
+                    },
+                ) { input ->
+                    when (val result = input.session.fetchSchedule(date = input.requestedDate)) {
+                        is CourtReservationPlatform.Session.FetchScheduleResult.Success -> FetchSchedule.Output.Success(result.schedule)
+                        CourtReservationPlatform.Session.FetchScheduleResult.Failed -> FetchSchedule.Output.Failed
+                    }
                 }
-            },
-        ) { input ->
-            val courtTimeslot = input.schedule.firstNotNullOfOrNull { (courtIdentifier, timeslotList) ->
-                val timeslot = timeslotList.find { it.time.compareTo(input.requestedTime) == 0 }
-                if (timeslot?.status == Timeslot.Status.FREE) CourtTimeslot(courtIdentifier, timeslot) else null
-            }
 
-            if (courtTimeslot != null) {
-                FindTimeslot.Output.Success(courtTimeslot = courtTimeslot)
-            } else {
-                FindTimeslot.Output.NotFound
-            }
-        }
-
-        step(
-            ReserveCourt,
-            collector = { state ->
-                ReserveCourt.Input(
-                    session = state.session!!,
-                    courtTimeslot = state.courtTimeslot!!,
-                    additionalPlayerIdentifierSet = state.additionalPlayerIdentifierSet,
-                    requestedDate = state.requestedDateTime.toLocalDate()
-                )
-            },
-            modifier = { _, output ->
-                when (output) {
-                    ReserveCourt.Output.Success -> State.Final.Success
-                    ReserveCourt.Output.Failed -> State.Final.Error.CourtReservationFailed
+                step(
+                    FindTimeslot,
+                    collector = { state ->
+                        FindTimeslot.Input(
+                            schedule = state.schedule.requireNotNull(),
+                            requestedTime = state.requestedDateTime.toLocalTime(),
+                        )
+                    },
+                    modifier = { state, output ->
+                        when (output) {
+                            is FindTimeslot.Output.Success -> state.copy(courtTimeslot = output.courtTimeslot)
+                            FindTimeslot.Output.NotFound -> State.Final.Error.NoTimeslotAvailable
+                        }
+                    },
+                ) { input ->
+                    input.schedule
+                        .asSequence()
+                        .flatMap { (courtIdentifier, timeslotList) ->
+                            timeslotList.map { timeslot ->
+                                CourtTimeslot(courtIdentifier = courtIdentifier, timeslot = timeslot)
+                            }
+                        }
+                        .firstOrNull { courtTimeslot ->
+                            courtTimeslot.timeslot.time.compareTo(input.requestedTime) == 0 &&
+                                    courtTimeslot.timeslot.status == Timeslot.Status.FREE
+                        }
+                        ?.let {
+                            FindTimeslot.Output.Success(courtTimeslot = it)
+                        }
+                        ?: FindTimeslot.Output.NotFound
                 }
-            },
-        ) { input ->
-            when (
-                input.session.reserveCourt(
-                    courtIdentifier = input.courtTimeslot.courtIdentifier,
-                    timeslot = input.courtTimeslot.timeslot,
-                    additionalPlayerIdentifierSet = input.additionalPlayerIdentifierSet,
-                    date = input.requestedDate
-                )
-            ) {
-                CourtReservationPlatform.Session.ReserveCourtResult.Success -> ReserveCourt.Output.Success
-                CourtReservationPlatform.Session.ReserveCourtResult.Failed -> ReserveCourt.Output.Failed
+
+                step(
+                    ReserveCourt,
+                    collector = { state ->
+                        ReserveCourt.Input(
+                            session = state.session.requireNotNull(),
+                            courtTimeslot = state.courtTimeslot.requireNotNull(),
+                            additionalPlayerIdentifierSet = state.additionalPlayerIdentifierSet,
+                            requestedDate = state.requestedDateTime.toLocalDate(),
+                        )
+                    },
+                    modifier = { _, output ->
+                        when (output) {
+                            is ReserveCourt.Output.Success -> State.Final.Success(
+                                bookedCourtIdentifier = output.bookedCourtIdentifier
+                            )
+                            ReserveCourt.Output.Failed -> State.Final.Error.CourtReservationFailed
+                        }
+                    },
+                ) { input ->
+                    when (
+                        input.session.reserveCourt(
+                            courtIdentifier = input.courtTimeslot.courtIdentifier,
+                            timeslot = input.courtTimeslot.timeslot,
+                            additionalPlayerIdentifierSet = input.additionalPlayerIdentifierSet,
+                            date = input.requestedDate,
+                        )
+                    ) {
+                        CourtReservationPlatform.Session.ReserveCourtResult.Success ->
+                            ReserveCourt.Output.Success(bookedCourtIdentifier = input.courtTimeslot.courtIdentifier)
+                        CourtReservationPlatform.Session.ReserveCourtResult.Failed -> ReserveCourt.Output.Failed
+                    }
+                }
+            }
+
+        object State {
+            data class Transient(
+                val player: Player,
+                val additionalPlayerIdentifierSet: Set<Player.Identifier>,
+                val requestedDateTime: LocalDateTime,
+                val password: CourtReservationPlatform.Password? = null,
+                val session: CourtReservationPlatform.Session? = null,
+                val schedule: Schedule? = null,
+                val courtTimeslot: CourtTimeslot? = null,
+            ) : Workflow.State.Transient
+
+            sealed interface Final : Workflow.State.Final {
+                data class Success(val bookedCourtIdentifier: CourtIdentifier) : Final
+
+                sealed interface Error : Final {
+                    data object InvalidNumberOfAdditionalPlayers : Error
+
+                    data object PasswordNotFound : Error
+
+                    data object AuthenticationFailed : Error
+
+                    data object FailedToFetchSchedule : Error
+
+                    data object NoTimeslotAvailable : Error
+
+                    data object CourtReservationFailed : Error
+                }
             }
         }
-    }
 
-    private object IsNumberOfAdditionalPlayersAllowed : Workflow.Step<IsNumberOfAdditionalPlayersAllowed.Input, Boolean> {
-        data class Input(val additionalPlayerIdentifierSet: Set<Player.Identifier>)
-    }
-
-    private object DeterminePassword : Workflow.Step<DeterminePassword.Input, DeterminePassword.Output> {
-        data class Input(val player: Player)
-
-        sealed interface Output {
-            data class Success(val password: CourtReservationPlatform.Password) : Output
-            data object NotFound : Output
+        private object IsNumberOfAdditionalPlayersAllowed : Workflow.Step<IsNumberOfAdditionalPlayersAllowed.Input, Boolean> {
+            data class Input(
+                val additionalPlayerIdentifierSet: Set<Player.Identifier>,
+            )
         }
-    }
 
-    private object StartSession : Workflow.Step<StartSession.Input, StartSession.Output> {
-        data class Input(
-            val player: Player,
-            val password: CourtReservationPlatform.Password
+        private object DeterminePassword : Workflow.Step<DeterminePassword.Input, DeterminePassword.Output> {
+            data class Input(
+                val player: Player,
+            )
+
+            sealed interface Output {
+                data class Success(
+                    val password: CourtReservationPlatform.Password,
+                ) : Output
+
+                data object NotFound : Output
+            }
+        }
+
+        private object StartSession : Workflow.Step<StartSession.Input, StartSession.Output> {
+            data class Input(
+                val player: Player,
+                val password: CourtReservationPlatform.Password,
+            )
+
+            sealed interface Output {
+                data class Success(
+                    val session: CourtReservationPlatform.Session,
+                ) : Output
+
+                data object Failed : Output
+            }
+        }
+
+        private object FetchSchedule : Workflow.Step<FetchSchedule.Input, FetchSchedule.Output> {
+            data class Input(
+                val session: CourtReservationPlatform.Session,
+                val requestedDate: LocalDate,
+            )
+
+            sealed interface Output {
+                data class Success(
+                    val schedule: Schedule,
+                ) : Output
+
+                data object Failed : Output
+            }
+        }
+
+        private object FindTimeslot : Workflow.Step<FindTimeslot.Input, FindTimeslot.Output> {
+            data class Input(
+                val schedule: Schedule,
+                val requestedTime: LocalTime,
+            )
+
+            sealed interface Output {
+                data class Success(
+                    val courtTimeslot: CourtTimeslot,
+                ) : Output
+
+                data object NotFound : Output
+            }
+        }
+
+        private object ReserveCourt : Workflow.Step<ReserveCourt.Input, ReserveCourt.Output> {
+            data class Input(
+                val session: CourtReservationPlatform.Session,
+                val courtTimeslot: CourtTimeslot,
+                val additionalPlayerIdentifierSet: Set<Player.Identifier>,
+                val requestedDate: LocalDate,
+            )
+
+            sealed interface Output {
+                data class Success(val bookedCourtIdentifier: CourtIdentifier) : Output
+
+                data object Failed : Output
+            }
+        }
+
+        data class CourtTimeslot(
+            val courtIdentifier: CourtIdentifier,
+            val timeslot: Timeslot,
         )
-
-        sealed interface Output {
-            data class Success(val session: CourtReservationPlatform.Session) : Output
-            data object Failed : Output
-        }
     }
-
-    private object FetchSchedule : Workflow.Step<FetchSchedule.Input, FetchSchedule.Output> {
-        data class Input(
-            val session: CourtReservationPlatform.Session,
-            val requestedDate: LocalDate
-        )
-
-        sealed interface Output {
-            data class Success(val schedule: Schedule) : Output
-            data object Failed : Output
-        }
-    }
-
-    private object FindTimeslot : Workflow.Step<FindTimeslot.Input, FindTimeslot.Output> {
-        data class Input(
-            val schedule: Schedule,
-            val requestedTime: LocalTime
-        )
-
-        sealed interface Output {
-            data class Success(val courtTimeslot: CourtTimeslot) : Output
-            data object NotFound : Output
-        }
-    }
-
-    private object ReserveCourt : Workflow.Step<ReserveCourt.Input, ReserveCourt.Output> {
-        data class Input(
-            val session: CourtReservationPlatform.Session,
-            val courtTimeslot: CourtTimeslot,
-            val additionalPlayerIdentifierSet: Set<Player.Identifier>,
-            val requestedDate: LocalDate
-        )
-
-        sealed interface Output {
-            data object Success : Output
-            data object Failed : Output
-        }
-    }
-
-    data class CourtTimeslot(
-        val courtIdentifier: CourtIdentifier,
-        val timeslot: Timeslot
-    )
-}

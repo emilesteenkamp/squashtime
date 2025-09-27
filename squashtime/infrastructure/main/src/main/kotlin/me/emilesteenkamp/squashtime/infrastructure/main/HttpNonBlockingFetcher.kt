@@ -1,4 +1,4 @@
-package me.emilesteenkamp.squashtime.infrastructure
+package me.emilesteenkamp.squashtime.infrastructure.main
 
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body

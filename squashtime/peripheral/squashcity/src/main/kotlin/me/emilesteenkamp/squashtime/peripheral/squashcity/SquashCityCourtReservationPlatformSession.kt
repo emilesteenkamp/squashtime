@@ -11,12 +11,12 @@ import it.skrape.fetcher.skrape
 import it.skrape.selects.html5.body
 import it.skrape.selects.html5.form
 import it.skrape.selects.html5.input
-import java.time.LocalDate
-import java.time.format.DateTimeFormatter
 import me.emilesteenkamp.squashtime.application.domain.CourtIdentifier
-import me.emilesteenkamp.squashtime.application.port.CourtReservationPlatform
 import me.emilesteenkamp.squashtime.application.domain.Player
 import me.emilesteenkamp.squashtime.application.domain.Timeslot
+import me.emilesteenkamp.squashtime.application.port.CourtReservationPlatform
+import java.time.LocalDate
+import java.time.format.DateTimeFormatter
 
 class SquashCityCourtReservationPlatformSession(
     private val authenticatedPlayerIdentifier: Player.Identifier,
@@ -24,40 +24,44 @@ class SquashCityCourtReservationPlatformSession(
     private val fetcher: NonBlockingFetcher<Request>,
     private val scheduleParser: SquashCityScheduleParser,
 ) : CourtReservationPlatform.Session {
-    override suspend fun fetchSchedule(date: LocalDate) = skrape(fetcher) {
-        request {
-            url =
-                "$BAANRESERVEREN_URL/reservations/${date.year}-${date.month.value}-${date.dayOfMonth}/sport/$SPORT_SQUASH_ID"
-            setAuthenticationCookie(authenticationCookie)
-        }
-        response {
-            if (responseStatus.component1() != 200) {
-                logger.warnUnexpectedResponseCode(expected = 200, actual = responseStatus.component1())
-                return@response CourtReservationPlatform.Session.FetchScheduleResult.Failed
+    override suspend fun fetchSchedule(date: LocalDate) =
+        skrape(fetcher) {
+            request {
+                url =
+                    "$BAANRESERVEREN_URL/reservations/${date.year}-${date.month.value}-${date.dayOfMonth}/sport/$SPORT_SQUASH_ID"
+                setAuthenticationCookie(authenticationCookie)
             }
+            response {
+                if (responseStatus.component1() != 200) {
+                    logger.warnUnexpectedResponseCode(expected = 200, actual = responseStatus.component1())
+                    return@response CourtReservationPlatform.Session.FetchScheduleResult.Failed
+                }
 
-            CourtReservationPlatform.Session.FetchScheduleResult.Success(
-                schedule = with(scheduleParser) { document.parseSchedule() }
-            )
+                CourtReservationPlatform.Session.FetchScheduleResult.Success(
+                    schedule = with(scheduleParser) { document.parseSchedule() },
+                )
+            }
         }
-    }
 
     override suspend fun reserveCourt(
         courtIdentifier: CourtIdentifier,
         timeslot: Timeslot,
         additionalPlayerIdentifierSet: Set<Player.Identifier>,
-        date: LocalDate
+        date: LocalDate,
     ): CourtReservationPlatform.Session.ReserveCourtResult {
-        val reservationToken = when (
-            val result = retrieveReservationToken(
-                courtIdentifier = courtIdentifier,
-                timeslot = timeslot,
-            )
-        ) {
-            is RetrieveReservationTokenResult.Success -> result.reservationToken
-            RetrieveReservationTokenResult.Failed,
-            RetrieveReservationTokenResult.TokenNotFound -> return CourtReservationPlatform.Session.ReserveCourtResult.Failed
-        }
+        val reservationToken =
+            when (
+                val result =
+                    retrieveReservationToken(
+                        courtIdentifier = courtIdentifier,
+                        timeslot = timeslot,
+                    )
+            ) {
+                is RetrieveReservationTokenResult.Success -> result.reservationToken
+                RetrieveReservationTokenResult.Failed,
+                RetrieveReservationTokenResult.TokenNotFound,
+                -> return CourtReservationPlatform.Session.ReserveCourtResult.Failed
+            }
 
         return when (
             confirmReservation(
@@ -65,7 +69,7 @@ class SquashCityCourtReservationPlatformSession(
                 timeslot = timeslot,
                 additionalPlayerIdentifierSet = additionalPlayerIdentifierSet,
                 date = date,
-                reservationToken = reservationToken
+                reservationToken = reservationToken,
             )
         ) {
             ConfirmReservationResult.Success -> CourtReservationPlatform.Session.ReserveCourtResult.Success
@@ -76,32 +80,35 @@ class SquashCityCourtReservationPlatformSession(
     private suspend fun retrieveReservationToken(
         courtIdentifier: CourtIdentifier,
         timeslot: Timeslot,
-    ): RetrieveReservationTokenResult = skrape(fetcher) {
-        request {
-            url = "$BAANRESERVEREN_URL/reservations/make/${courtIdentifier.value}/${timeslot.identifier.value}"
-            setAuthenticationCookie(authenticationCookie)
-        }
-        response {
-            if (responseStatus.component1() != 200) {
-                logger.warnUnexpectedResponseCode(expected = 200, actual = responseStatus.component1())
-                return@response RetrieveReservationTokenResult.Failed
+    ): RetrieveReservationTokenResult =
+        skrape(fetcher) {
+            request {
+                url = "$BAANRESERVEREN_URL/reservations/make/${courtIdentifier.value}/${timeslot.identifier.value}"
+                setAuthenticationCookie(authenticationCookie)
             }
-            document.body {
-                form {
-                    input {
-                        findFirst {
-                            attributes["value"]
-                                ?.let { RetrieveReservationTokenResult.Success(reservationToken = it) }
-                                ?: RetrieveReservationTokenResult.TokenNotFound
+            response {
+                if (responseStatus.component1() != 200) {
+                    logger.warnUnexpectedResponseCode(expected = 200, actual = responseStatus.component1())
+                    return@response RetrieveReservationTokenResult.Failed
+                }
+                document.body {
+                    form {
+                        input {
+                            findFirst {
+                                attributes["value"]
+                                    ?.let { RetrieveReservationTokenResult.Success(reservationToken = it) }
+                                    ?: RetrieveReservationTokenResult.TokenNotFound
+                            }
                         }
                     }
                 }
             }
         }
-    }
 
     private sealed interface RetrieveReservationTokenResult {
-        data class Success(val reservationToken: String) : RetrieveReservationTokenResult
+        data class Success(
+            val reservationToken: String,
+        ) : RetrieveReservationTokenResult
 
         data object TokenNotFound : RetrieveReservationTokenResult
 
@@ -113,7 +120,7 @@ class SquashCityCourtReservationPlatformSession(
         timeslot: Timeslot,
         additionalPlayerIdentifierSet: Set<Player.Identifier>,
         date: LocalDate,
-        reservationToken: String
+        reservationToken: String,
     ): ConfirmReservationResult {
         val dateFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd")
         val timeFormatter = DateTimeFormatter.ofPattern("HH:mm")
@@ -133,7 +140,7 @@ class SquashCityCourtReservationPlatformSession(
                         "end_time" to timeslot.time.plusMinutes(45).format(timeFormatter)
                         "players[1]" to authenticatedPlayerIdentifier.value
                         additionalPlayerIdentifierSet.forEachIndexed { index, additionalPlayerIdentifier ->
-                            "players[${2+index}]" to additionalPlayerIdentifier.value
+                            "players[${2 + index}]" to additionalPlayerIdentifier.value
                         }
                         "confirmed" to 1
                     }

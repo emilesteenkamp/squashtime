@@ -18,10 +18,10 @@ class SquashCityScheduleParserTest {
         private const val SQUASH_CITY_SCHEDULE = "/squashcity/squashcity-schedule.html"
 
         fun readFileContents(fileName: String): String {
-            val resource = SquashCityScheduleParserTest::class.java.getResource(fileName)
-                ?: fail("Test resource not found $fileName")
+            val resource =
+                SquashCityScheduleParserTest::class.java.getResource(fileName)
+                    ?: fail("Test resource not found $fileName")
             return resource.readText(Charsets.UTF_8)
         }
     }
 }
-

@@ -9,24 +9,26 @@ fun Request.setAuthenticationCookie(authenticationCookie: Cookie) {
 }
 
 fun Request.setCORSHeaders() {
-    headers = headers + mapOf(
-        "origin" to "https://squashcity.baanreserveren.nl",
-        "referer" to "https://squashcity.baanreserveren.nl/reservations",
-        "sec-fetch-dest" to "empty",
-        "sec-fetch-mode" to "cors",
-        "sec-fetch-site" to "same-origin"
-    )
+    headers = headers +
+        mapOf(
+            "origin" to "https://squashcity.baanreserveren.nl",
+            "referer" to "https://squashcity.baanreserveren.nl/reservations",
+            "sec-fetch-dest" to "empty",
+            "sec-fetch-mode" to "cors",
+            "sec-fetch-site" to "same-origin",
+        )
 }
 
 fun KLogger.warnUnexpectedResponseCode(
     expected: Int,
-    actual: Int
+    actual: Int,
 ) {
     atWarn {
         message = "Unexpected response code."
-        payload = mapOf(
-            "expectedResponseCode" to expected,
-            "actualResponseCode" to actual
-        )
+        payload =
+            mapOf(
+                "expectedResponseCode" to expected,
+                "actualResponseCode" to actual,
+            )
     }
 }

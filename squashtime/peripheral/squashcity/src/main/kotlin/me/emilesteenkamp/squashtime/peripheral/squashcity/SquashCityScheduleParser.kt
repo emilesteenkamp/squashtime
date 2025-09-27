@@ -11,46 +11,47 @@ import java.time.LocalTime
 import kotlin.collections.plus
 
 object SquashCityScheduleParser {
-    fun Doc.parseSchedule(): Schedule = table {
-        findLast {
-            tr {
-                findAll {
-                    map { trDoc ->
-                        val documentTimeslotIdentifier = trDoc.attributes["utc"] ?: return@map null
-                        val documentTimeslotTime = trDoc.attributes["data-time"] ?: return@map null
-                        val timeslotIdentifier = Timeslot.Identifier(documentTimeslotIdentifier)
-                        val timeslotTime = LocalTime.parse(documentTimeslotTime)
-                        trDoc.td {
-                            findAll {
-                                map { tdDoc ->
-                                    val documentCourtIdentifier = tdDoc.attributes["slot"] ?: return@map null
-                                    val documentTimeslotStatus = tdDoc.attributes["type"] ?: ""
-                                    val courtIdentifier = CourtIdentifier(documentCourtIdentifier)
-                                    val timeslotStatus = when (documentTimeslotStatus) {
-                                        "free" -> Timeslot.Status.FREE
-                                        "taken" -> Timeslot.Status.TAKEN
-                                        else -> Timeslot.Status.CLOSED
+    fun Doc.parseSchedule(): Schedule =
+        table {
+            findLast {
+                tr {
+                    findAll {
+                        map { trDoc ->
+                            val documentTimeslotIdentifier = trDoc.attributes["utc"] ?: return@map null
+                            val documentTimeslotTime = trDoc.attributes["data-time"] ?: return@map null
+                            val timeslotIdentifier = Timeslot.Identifier(documentTimeslotIdentifier)
+                            val timeslotTime = LocalTime.parse(documentTimeslotTime)
+                            trDoc.td {
+                                findAll {
+                                    map { tdDoc ->
+                                        val documentCourtIdentifier = tdDoc.attributes["slot"] ?: return@map null
+                                        val documentTimeslotStatus = tdDoc.attributes["type"] ?: ""
+                                        val courtIdentifier = CourtIdentifier(documentCourtIdentifier)
+                                        val timeslotStatus =
+                                            when (documentTimeslotStatus) {
+                                                "free" -> Timeslot.Status.FREE
+                                                "taken" -> Timeslot.Status.TAKEN
+                                                else -> Timeslot.Status.CLOSED
+                                            }
+                                        courtIdentifier to
+                                            Timeslot(
+                                                identifier = timeslotIdentifier,
+                                                time = timeslotTime,
+                                                status = timeslotStatus,
+                                            )
                                     }
-                                    courtIdentifier to Timeslot(
-                                        identifier = timeslotIdentifier,
-                                        time = timeslotTime,
-                                        status = timeslotStatus
-                                    )
                                 }
                             }
                         }
                     }
                 }
             }
-        }
-    }
-        .filterNotNull()
-        .flatten()
-        .filterNotNull()
-        .fold(emptyMap<CourtIdentifier, List<Timeslot>>()) { acc, it ->
-            acc + (it.first to ((acc[it.first] ?: emptyList()) + it.second))
-        }
-        .mapValues {
-            it.value.sortedBy { timeslot -> timeslot.time }
-        }
+        }.filterNotNull()
+            .flatten()
+            .filterNotNull()
+            .fold(emptyMap<CourtIdentifier, List<Timeslot>>()) { acc, it ->
+                acc + (it.first to ((acc[it.first] ?: emptyList()) + it.second))
+            }.mapValues {
+                it.value.sortedBy { timeslot -> timeslot.time }
+            }
 }
