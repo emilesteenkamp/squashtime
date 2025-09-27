@@ -43,19 +43,20 @@ abstract class Infrastructure {
     protected fun yaml(): Yaml = Yaml.default
 
     @Provides
-    protected fun httpClient(): HttpClient = HttpClient(OkHttp) {
-        install(Logging) {
-            logger = Logger.DEFAULT
-            level = LogLevel.INFO
+    protected fun httpClient(): HttpClient =
+        HttpClient(OkHttp) {
+            install(Logging) {
+                logger = Logger.DEFAULT
+                level = LogLevel.INFO
+            }
         }
-    }
 
     @Provides
     protected fun credentialsInputStream(): CourtReservationPlatformCredentialsInputStream =
         Infrastructure::class.java
-        .getResource(SQUASH_CITY_CREDENTIALS_LOOKUP_FILE)
-        ?.openStream()
-        ?: error("No squash-city-credentials-lookup.yaml file found.")
+            .getResource(SQUASH_CITY_CREDENTIALS_LOOKUP_FILE)
+            ?.openStream()
+            ?: error("No squash-city-credentials-lookup.yaml file found.")
 
     @Provides
     protected fun squashCityScheduleParser() = SquashCityScheduleParser
