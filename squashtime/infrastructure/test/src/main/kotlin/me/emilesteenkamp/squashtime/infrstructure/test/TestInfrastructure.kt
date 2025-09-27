@@ -17,7 +17,7 @@ import me.tatarka.inject.annotations.Provides
 abstract class TestInfrastructure(
     @get:Provides
     @Suppress("Unused")
-    protected val testScope: TestCoroutineScope
+    val testScope: TestCoroutineScope
 ) {
     abstract val reserveCourtUseCase: ReserveCourtUseCase
     abstract val mockCourtReservationPlatformDataSource: MockCourtReservationPlatform.DataSource
