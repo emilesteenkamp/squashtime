@@ -1,4 +1,4 @@
-package me.emilesteenkamp.squashtime.infrastructure
+package me.emilesteenkamp.squashtime.infrastructure.main
 
 import com.charleskorn.kaml.Yaml
 import io.ktor.client.HttpClient

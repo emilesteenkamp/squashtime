@@ -14,7 +14,7 @@ val invoker: Configuration by configurations.creating
 
 dependencies {
     implementation(project(":squashtime:application"))
-    implementation(project(":squashtime:infrastructure"))
+    implementation(project(":squashtime:infrastructure:main"))
 
     implementation(libs.google.cloud.function.framework.api)
     implementation(libs.google.cloud.function.invoker)
@@ -34,13 +34,15 @@ tasks.register<JavaExec>("runFunction") {
     classpath = invoker
     inputs.files(configurations.runtimeClasspath, sourceSets.main.get().output)
     args(
-        "--target", "me.emilesteenkamp.squashtime.entrypoint.googlecloudfunction.reservecourt.atdatetime.ReserveCourtAtDateTimeFunctionEntryPoint",
-        "--port", "8080"
+        "--target",
+        "me.emilesteenkamp.squashtime.entrypoint.googlecloudfunction.reservecourt.atdatetime.ReserveCourtAtDateTimeFunctionEntryPoint",
+        "--port",
+        "8080",
     )
     doFirst {
         args(
             "--classpath",
-            files(configurations.runtimeClasspath, sourceSets.main.get().output).asPath
+            files(configurations.runtimeClasspath, sourceSets.main.get().output).asPath,
         )
     }
 }
@@ -55,8 +57,10 @@ jib {
     container {
         mainClass = "com.google.cloud.functions.invoker.runner.Invoker"
         ports = listOf("8080")
-        environment = mapOf(
-            "FUNCTION_TARGET" to "me.emilesteenkamp.squashtime.entrypoint.googlecloudfunction.reservecourt.atdatetime.ReserveCourtAtDateTimeFunctionEntryPoint"
-        )
+        environment =
+            mapOf(
+                "FUNCTION_TARGET" to
+                    "me.emilesteenkamp.squashtime.entrypoint.googlecloudfunction.reservecourt.atdatetime.ReserveCourtAtDateTimeFunctionEntryPoint",
+            )
     }
 }
