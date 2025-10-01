@@ -109,7 +109,7 @@ class Orktestrator<TRANSIENT_STATE, FINALISED_STATE>
         internal fun build(): Orktestrator<TRANSIENT_STATE, FINALISED_STATE> {
             val graphMap = linkedMapOf<Step<*, *>, StepRunner<TRANSIENT_STATE, FINALISED_STATE, *, *>>()
 
-            graphBuilder.sequencedEntrySet().forEachIndexed { index, entry ->
+            graphBuilder.entries.forEachIndexed { index, entry ->
                 graphMap[entry.key] =
                     StepRunner(
                         collector = entry.value.collector as CollectorScope.(TRANSIENT_STATE) -> Any,
@@ -117,7 +117,7 @@ class Orktestrator<TRANSIENT_STATE, FINALISED_STATE>
                         router =
                             entry.value.router ?: { _ ->
                                 graphBuilder
-                                    .sequencedEntrySet()
+                                    .entries
                                     .elementAtOrNull(index + 1)
                                     ?.key
                                     ?: Step.None
