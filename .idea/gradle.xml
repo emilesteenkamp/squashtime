@@ -17,8 +17,13 @@
             <option value="$PROJECT_DIR$/squashtime/entrypoint/googlecloudfunction/reservecourt/atdatetime" />
             <option value="$PROJECT_DIR$/squashtime/entrypoint/googlecloudfunction/reservecourt/oneweeklater" />
             <option value="$PROJECT_DIR$/squashtime/infrastructure" />
+            <option value="$PROJECT_DIR$/squashtime/infrastructure/main" />
+            <option value="$PROJECT_DIR$/squashtime/infrastructure/scope" />
+            <option value="$PROJECT_DIR$/squashtime/infrastructure/scope/testscoped" />
+            <option value="$PROJECT_DIR$/squashtime/infrastructure/test" />
             <option value="$PROJECT_DIR$/squashtime/peripheral" />
             <option value="$PROJECT_DIR$/squashtime/peripheral/filesystem" />
+            <option value="$PROJECT_DIR$/squashtime/peripheral/mock" />
             <option value="$PROJECT_DIR$/squashtime/peripheral/squashcity" />
             <option value="$PROJECT_DIR$/squashtime/workflow" />
           </set>

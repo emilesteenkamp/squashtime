@@ -3,16 +3,11 @@ plugins {
     alias(libs.plugins.google.devtools.ksp)
 }
 
-group = "me.emilesteenkamp"
-
-repositories {
-    mavenCentral()
-}
-
 dependencies {
-    implementation(project(":squashtime:application"))
-    implementation(project(":squashtime:peripheral:filesystem"))
-    implementation(project(":squashtime:peripheral:squashcity"))
+    api(projects.squashtime.application)
+
+    implementation(projects.squashtime.peripheral.filesystem)
+    implementation(projects.squashtime.peripheral.squashcity)
 
     implementation(libs.kaml)
     implementation(libs.kotlinlogging)
@@ -25,8 +20,4 @@ dependencies {
     implementation(libs.slf4j.simple)
 
     ksp(libs.kotlininject.compiler.ksp)
-}
-
-kotlin {
-    jvmToolchain(21)
 }
