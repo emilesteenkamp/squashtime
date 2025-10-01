@@ -30,13 +30,13 @@ class Workflow<TRANSIENT_STATE, FINALISED_STATE>
                 error("State in invalid state.")
             }
 
-        val output = runner.performer(input)
+        val output = runner.executor(input)
 
         return when (val state = runner.modifier(state, output)) {
             is State.Final -> state.unsafeCast()
             is State.Transient -> {
                 val transientState = state.unsafeCast()
-                val nextStep = runner.determiner(transientState)
+                val nextStep = runner.router(transientState)
                 run(transientState, nextStep)
             }
         }
@@ -93,15 +93,15 @@ class Workflow<TRANSIENT_STATE, FINALISED_STATE>
             step: Step<INPUT, OUTPUT>,
             collector: CollectorScope.(TRANSIENT_STATE) -> INPUT,
             modifier: ((TRANSIENT_STATE, OUTPUT) -> State)? = null,
-            determiner: ((TRANSIENT_STATE) -> Step<*, *>)? = null,
-            performer: suspend (INPUT) -> OUTPUT,
+            router: ((TRANSIENT_STATE) -> Step<*, *>)? = null,
+            executor: suspend (INPUT) -> OUTPUT,
         ) {
             graphBuilder[step] =
                 StepRunnerDefinition(
                     collector = collector,
                     modifier = modifier,
-                    determiner = determiner,
-                    performer = performer,
+                    router = router,
+                    executor = executor,
                 )
         }
 
@@ -114,15 +114,15 @@ class Workflow<TRANSIENT_STATE, FINALISED_STATE>
                     StepRunner(
                         collector = entry.value.collector as CollectorScope.(TRANSIENT_STATE) -> Any,
                         modifier = (entry.value.modifier ?: { state, _ -> state }) as (TRANSIENT_STATE, Any) -> State,
-                        determiner =
-                            entry.value.determiner ?: { _ ->
+                        router =
+                            entry.value.router ?: { _ ->
                                 graphBuilder
                                     .sequencedEntrySet()
                                     .elementAtOrNull(index + 1)
                                     ?.key
                                     ?: Step.None
                             },
-                        performer = entry.value.performer as suspend (Any) -> Any,
+                        executor = entry.value.executor as suspend (Any) -> Any,
                     )
             }
 
@@ -132,8 +132,8 @@ class Workflow<TRANSIENT_STATE, FINALISED_STATE>
         private data class StepRunnerDefinition<TRANSIENT_STATE, FINALISED_STATE, INPUT, OUTPUT>(
             val collector: CollectorScope.(TRANSIENT_STATE) -> INPUT,
             val modifier: ((TRANSIENT_STATE, OUTPUT) -> State)? = null,
-            val determiner: ((TRANSIENT_STATE) -> (Step<*, *>))? = null,
-            val performer: suspend (INPUT) -> OUTPUT,
+            val router: ((TRANSIENT_STATE) -> (Step<*, *>))? = null,
+            val executor: suspend (INPUT) -> OUTPUT,
         ) where TRANSIENT_STATE : State.Transient,
                   FINALISED_STATE : State.Final
     }
@@ -141,8 +141,8 @@ class Workflow<TRANSIENT_STATE, FINALISED_STATE>
     private data class StepRunner<TRANSIENT_STATE, FINALISED_STATE, INPUT, OUTPUT>(
         val collector: CollectorScope.(TRANSIENT_STATE) -> INPUT,
         val modifier: (TRANSIENT_STATE, OUTPUT) -> State,
-        val determiner: ((TRANSIENT_STATE) -> (Step<*, *>)),
-        val performer: suspend (INPUT) -> OUTPUT,
+        val router: ((TRANSIENT_STATE) -> (Step<*, *>)),
+        val executor: suspend (INPUT) -> OUTPUT,
     ) where TRANSIENT_STATE : State.Transient,
               FINALISED_STATE : State.Final
 
