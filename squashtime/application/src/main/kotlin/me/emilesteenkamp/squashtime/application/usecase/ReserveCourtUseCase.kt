@@ -7,7 +7,7 @@ import me.emilesteenkamp.squashtime.application.domain.Timeslot
 import me.emilesteenkamp.squashtime.application.port.CourtReservationPlatform
 import me.emilesteenkamp.squashtime.application.port.CourtReservationPlatformPasswordLookup
 import me.emilesteenkamp.squashtime.application.usecase.base.WorkflowUseCase
-import me.emilesteenkamp.squashtime.workflow.Workflow
+import me.emilesteenkamp.squashtime.orktestrator.Orktestrator
 import me.tatarka.inject.annotations.Inject
 import java.time.LocalDate
 import java.time.LocalDateTime
@@ -19,8 +19,8 @@ class ReserveCourtUseCase
         private val courtReservationPlatform: CourtReservationPlatform,
         private val courtReservationPlatformPasswordLookup: CourtReservationPlatformPasswordLookup,
     ) : WorkflowUseCase<ReserveCourtUseCase.State.Transient, ReserveCourtUseCase.State.Final>() {
-        override val workflow =
-            Workflow.define<State.Transient, State.Final> {
+        override val orktestrator =
+            Orktestrator.define<State.Transient, State.Final> {
                 step(
                     IsNumberOfAdditionalPlayersAllowed,
                     collector = { state -> IsNumberOfAdditionalPlayersAllowed.Input(state.additionalPlayerIdentifierSet) },
@@ -161,9 +161,9 @@ class ReserveCourtUseCase
                 val session: CourtReservationPlatform.Session? = null,
                 val schedule: Schedule? = null,
                 val courtTimeslot: CourtTimeslot? = null,
-            ) : Workflow.State.Transient
+            ) : Orktestrator.State.Transient
 
-            sealed interface Final : Workflow.State.Final {
+            sealed interface Final : Orktestrator.State.Final {
                 data class Success(
                     val bookedCourtIdentifier: CourtIdentifier,
                 ) : Final
@@ -184,13 +184,13 @@ class ReserveCourtUseCase
             }
         }
 
-        private object IsNumberOfAdditionalPlayersAllowed : Workflow.Step<IsNumberOfAdditionalPlayersAllowed.Input, Boolean> {
+        private object IsNumberOfAdditionalPlayersAllowed : Orktestrator.Step<IsNumberOfAdditionalPlayersAllowed.Input, Boolean> {
             data class Input(
                 val additionalPlayerIdentifierSet: Set<Player.Identifier>,
             )
         }
 
-        private object DeterminePassword : Workflow.Step<DeterminePassword.Input, DeterminePassword.Output> {
+        private object DeterminePassword : Orktestrator.Step<DeterminePassword.Input, DeterminePassword.Output> {
             data class Input(
                 val player: Player,
             )
@@ -204,7 +204,7 @@ class ReserveCourtUseCase
             }
         }
 
-        private object StartSession : Workflow.Step<StartSession.Input, StartSession.Output> {
+        private object StartSession : Orktestrator.Step<StartSession.Input, StartSession.Output> {
             data class Input(
                 val player: Player,
                 val password: CourtReservationPlatform.Password,
@@ -219,7 +219,7 @@ class ReserveCourtUseCase
             }
         }
 
-        private object FetchSchedule : Workflow.Step<FetchSchedule.Input, FetchSchedule.Output> {
+        private object FetchSchedule : Orktestrator.Step<FetchSchedule.Input, FetchSchedule.Output> {
             data class Input(
                 val session: CourtReservationPlatform.Session,
                 val requestedDate: LocalDate,
@@ -234,7 +234,7 @@ class ReserveCourtUseCase
             }
         }
 
-        private object FindTimeslot : Workflow.Step<FindTimeslot.Input, FindTimeslot.Output> {
+        private object FindTimeslot : Orktestrator.Step<FindTimeslot.Input, FindTimeslot.Output> {
             data class Input(
                 val schedule: Schedule,
                 val requestedTime: LocalTime,
@@ -249,7 +249,7 @@ class ReserveCourtUseCase
             }
         }
 
-        private object ReserveCourt : Workflow.Step<ReserveCourt.Input, ReserveCourt.Output> {
+        private object ReserveCourt : Orktestrator.Step<ReserveCourt.Input, ReserveCourt.Output> {
             data class Input(
                 val session: CourtReservationPlatform.Session,
                 val courtTimeslot: CourtTimeslot,

@@ -3,7 +3,7 @@ plugins {
 }
 
 dependencies {
-    api(projects.squashtime.workflow)
+    api(projects.squashtime.orktestrator)
 
     implementation(libs.kotlininject.runtime)
     implementation(libs.kotlinlogging)

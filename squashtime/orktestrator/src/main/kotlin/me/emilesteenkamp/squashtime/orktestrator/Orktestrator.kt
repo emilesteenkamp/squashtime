@@ -1,10 +1,10 @@
-package me.emilesteenkamp.squashtime.workflow
+package me.emilesteenkamp.squashtime.orktestrator
 
-class Workflow<TRANSIENT_STATE, FINALISED_STATE>
+class Orktestrator<TRANSIENT_STATE, FINALISED_STATE>
     private constructor(
         private val graph: Graph<TRANSIENT_STATE, FINALISED_STATE>,
-    ) where TRANSIENT_STATE : Workflow.State.Transient,
-          FINALISED_STATE : Workflow.State.Final {
+    ) where TRANSIENT_STATE : Orktestrator.State.Transient,
+            FINALISED_STATE : Orktestrator.State.Final {
     suspend fun start(initialState: TRANSIENT_STATE): FINALISED_STATE {
         val step = graph.initialStep() ?: error("No steps defined.")
         return run(
@@ -26,7 +26,7 @@ class Workflow<TRANSIENT_STATE, FINALISED_STATE>
                         collector(state)
                     }
                 }
-            } catch (_: CollectorScope.InvalidWorkflowStateError) {
+            } catch (_: CollectorScope.InvalidStateError) {
                 error("State in invalid state.")
             }
 
@@ -106,7 +106,7 @@ class Workflow<TRANSIENT_STATE, FINALISED_STATE>
         }
 
         @Suppress("UNCHECKED_CAST")
-        internal fun build(): Workflow<TRANSIENT_STATE, FINALISED_STATE> {
+        internal fun build(): Orktestrator<TRANSIENT_STATE, FINALISED_STATE> {
             val graphMap = linkedMapOf<Step<*, *>, StepRunner<TRANSIENT_STATE, FINALISED_STATE, *, *>>()
 
             graphBuilder.sequencedEntrySet().forEachIndexed { index, entry ->
@@ -126,7 +126,7 @@ class Workflow<TRANSIENT_STATE, FINALISED_STATE>
                     )
             }
 
-            return Workflow(Graph(graphMap))
+            return Orktestrator(Graph(graphMap))
         }
 
         private data class StepRunnerDefinition<TRANSIENT_STATE, FINALISED_STATE, INPUT, OUTPUT>(
@@ -147,15 +147,15 @@ class Workflow<TRANSIENT_STATE, FINALISED_STATE>
               FINALISED_STATE : State.Final
 
     object CollectorScope {
-        fun <T : Any?> T?.requireNotNull(): T = this ?: throw InvalidWorkflowStateError()
+        fun <T : Any?> T?.requireNotNull(): T = this ?: throw InvalidStateError()
 
-        class InvalidWorkflowStateError : Error()
+        class InvalidStateError : Error()
     }
 
     companion object {
         fun <TRANSIENT_STATE, FINALISED_STATE> define(
             builder: Builder<TRANSIENT_STATE, FINALISED_STATE>.() -> Unit,
-        ): Workflow<TRANSIENT_STATE, FINALISED_STATE> where
+        ): Orktestrator<TRANSIENT_STATE, FINALISED_STATE> where
                                                             TRANSIENT_STATE : State.Transient,
                                                             FINALISED_STATE : State.Final =
             Builder<TRANSIENT_STATE, FINALISED_STATE>().apply(builder).build()
