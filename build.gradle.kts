@@ -5,3 +5,19 @@ plugins {
     alias(libs.plugins.kotlinx.serialization) apply false
 }
 
+group = "me.emilesteenkamp"
+
+allprojects {
+    repositories {
+        mavenCentral()
+    }
+}
+
+subprojects {
+    // apply to all JVM submodules
+    plugins.withId("org.jetbrains.kotlin.jvm") {
+        extensions.configure<org.jetbrains.kotlin.gradle.dsl.KotlinJvmProjectExtension> {
+            jvmToolchain(21)
+        }
+    }
+}

@@ -108,12 +108,10 @@ class ReserveCourtUseCase
                             timeslotList.map { timeslot ->
                                 CourtTimeslot(courtIdentifier = courtIdentifier, timeslot = timeslot)
                             }
-                        }
-                        .firstOrNull { courtTimeslot ->
+                        }.firstOrNull { courtTimeslot ->
                             courtTimeslot.timeslot.time.compareTo(input.requestedTime) == 0 &&
-                                    courtTimeslot.timeslot.status == Timeslot.Status.FREE
-                        }
-                        ?.let {
+                                courtTimeslot.timeslot.status == Timeslot.Status.FREE
+                        }?.let {
                             FindTimeslot.Output.Success(courtTimeslot = it)
                         }
                         ?: FindTimeslot.Output.NotFound
@@ -131,9 +129,10 @@ class ReserveCourtUseCase
                     },
                     modifier = { _, output ->
                         when (output) {
-                            is ReserveCourt.Output.Success -> State.Final.Success(
-                                bookedCourtIdentifier = output.bookedCourtIdentifier
-                            )
+                            is ReserveCourt.Output.Success ->
+                                State.Final.Success(
+                                    bookedCourtIdentifier = output.bookedCourtIdentifier,
+                                )
                             ReserveCourt.Output.Failed -> State.Final.Error.CourtReservationFailed
                         }
                     },
@@ -165,7 +164,9 @@ class ReserveCourtUseCase
             ) : Workflow.State.Transient
 
             sealed interface Final : Workflow.State.Final {
-                data class Success(val bookedCourtIdentifier: CourtIdentifier) : Final
+                data class Success(
+                    val bookedCourtIdentifier: CourtIdentifier,
+                ) : Final
 
                 sealed interface Error : Final {
                     data object InvalidNumberOfAdditionalPlayers : Error
@@ -257,7 +258,9 @@ class ReserveCourtUseCase
             )
 
             sealed interface Output {
-                data class Success(val bookedCourtIdentifier: CourtIdentifier) : Output
+                data class Success(
+                    val bookedCourtIdentifier: CourtIdentifier,
+                ) : Output
 
                 data object Failed : Output
             }

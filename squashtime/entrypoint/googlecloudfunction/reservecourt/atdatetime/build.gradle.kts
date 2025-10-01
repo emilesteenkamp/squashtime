@@ -4,17 +4,10 @@ plugins {
     alias(libs.plugins.google.cloud.jib)
 }
 
-group = "me.emilesteenkamp"
-
-repositories {
-    mavenCentral()
-}
-
 val invoker: Configuration by configurations.creating
 
 dependencies {
-    implementation(project(":squashtime:application"))
-    implementation(project(":squashtime:infrastructure:main"))
+    implementation(projects.squashtime.infrastructure.main)
 
     implementation(libs.google.cloud.function.framework.api)
     implementation(libs.google.cloud.function.invoker)
@@ -23,10 +16,6 @@ dependencies {
     implementation(libs.kotlinx.serialization.json)
 
     invoker(libs.google.cloud.function.invoker)
-}
-
-kotlin {
-    jvmToolchain(21)
 }
 
 tasks.register<JavaExec>("runFunction") {

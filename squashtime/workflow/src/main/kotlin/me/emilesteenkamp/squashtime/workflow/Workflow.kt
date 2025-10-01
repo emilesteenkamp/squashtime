@@ -19,15 +19,16 @@ class Workflow<TRANSIENT_STATE, FINALISED_STATE>
     ): FINALISED_STATE {
         val runner = graph.runnerFor(step) ?: error("No step runner for step $step")
 
-        val input = try {
-            with(runner) {
-                with(CollectorScope) {
-                    collector(state)
+        val input =
+            try {
+                with(runner) {
+                    with(CollectorScope) {
+                        collector(state)
+                    }
                 }
+            } catch (_: CollectorScope.InvalidWorkflowStateError) {
+                error("State in invalid state.")
             }
-        } catch (_: CollectorScope.InvalidWorkflowStateError) {
-            error("State in invalid state.")
-        }
 
         val output = runner.performer(input)
 
@@ -146,11 +147,9 @@ class Workflow<TRANSIENT_STATE, FINALISED_STATE>
               FINALISED_STATE : State.Final
 
     object CollectorScope {
-        fun <T: Any?> T?.requireNotNull(): T {
-            return this ?: throw InvalidWorkflowStateError()
-        }
+        fun <T : Any?> T?.requireNotNull(): T = this ?: throw InvalidWorkflowStateError()
 
-        class InvalidWorkflowStateError() : Error()
+        class InvalidWorkflowStateError : Error()
     }
 
     companion object {
