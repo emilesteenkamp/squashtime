@@ -30,14 +30,41 @@ class ReserveCourtFunction(
     override fun service(
         request: HttpRequest,
         response: HttpResponse,
-    ) = runBlocking {
+    ): Unit = runBlocking {
         val reserveCourtRequestSerial = request.decodeToSerial<ReserveCourtRequestSerial>()
 
         logger.info { "Accepted request with serial $reserveCourtRequestSerial" }
 
-        when (
+        reserveCourtUseCase.invoke(
+            ReserveCourtUseCase.Input(
+                player = reserveCourtRequestSerial.player.toPlayer(),
+                additionalPlayerIdentifierSet =
+                    reserveCourtRequestSerial.additionalPlayerIdentifierList
+                        .map {
+                            Player.Identifier(
+                                it,
+                            )
+                        }.toSet(),
+                requestedDateTime =
+                    reserveCourtRequestSerial.time
+                        .toLocalTime()
+                        .atDate(LocalDate.now().plusWeeks(1)),
+            ),
+        )
+
+        response.setStatusCode(200)
+    }
+
+    private inline fun <reified SERIAL> HttpRequest.decodeToSerial(): SERIAL = reader.readText().let { json.decodeFromString<SERIAL>(it) }
+
+    override fun accept(event: CloudEvent): Unit =
+        runBlocking {
+            val reserveCourtRequestSerial = event.decodeToSerial<ReserveCourtRequestSerial>()
+
+            logger.info { "Accepted event with serial $reserveCourtRequestSerial" }
+
             reserveCourtUseCase.invoke(
-                ReserveCourtUseCase.State.Transient(
+                ReserveCourtUseCase.Input(
                     player = reserveCourtRequestSerial.player.toPlayer(),
                     additionalPlayerIdentifierSet =
                         reserveCourtRequestSerial.additionalPlayerIdentifierList
@@ -52,53 +79,6 @@ class ReserveCourtFunction(
                             .atDate(LocalDate.now().plusWeeks(1)),
                 ),
             )
-        ) {
-            is ReserveCourtUseCase.State.Final.Success -> response.setStatusCode(200)
-            ReserveCourtUseCase.State.Final.Error.AuthenticationFailed,
-            ReserveCourtUseCase.State.Final.Error.CourtReservationFailed,
-            ReserveCourtUseCase.State.Final.Error.FailedToFetchSchedule,
-            ReserveCourtUseCase.State.Final.Error.InvalidNumberOfAdditionalPlayers,
-            ReserveCourtUseCase.State.Final.Error.NoTimeslotAvailable,
-            ReserveCourtUseCase.State.Final.Error.PasswordNotFound,
-            -> response.setStatusCode(400)
-        }
-    }
-
-    private inline fun <reified SERIAL> HttpRequest.decodeToSerial(): SERIAL = reader.readText().let { json.decodeFromString<SERIAL>(it) }
-
-    override fun accept(event: CloudEvent) =
-        runBlocking {
-            val reserveCourtRequestSerial = event.decodeToSerial<ReserveCourtRequestSerial>()
-
-            logger.info { "Accepted event with serial $reserveCourtRequestSerial" }
-
-            when (
-                reserveCourtUseCase.invoke(
-                    ReserveCourtUseCase.State.Transient(
-                        player = reserveCourtRequestSerial.player.toPlayer(),
-                        additionalPlayerIdentifierSet =
-                            reserveCourtRequestSerial.additionalPlayerIdentifierList
-                                .map {
-                                    Player.Identifier(
-                                        it,
-                                    )
-                                }.toSet(),
-                        requestedDateTime =
-                            reserveCourtRequestSerial.time
-                                .toLocalTime()
-                                .atDate(LocalDate.now().plusWeeks(1)),
-                    ),
-                )
-            ) {
-                is ReserveCourtUseCase.State.Final.Success -> {}
-                ReserveCourtUseCase.State.Final.Error.AuthenticationFailed,
-                ReserveCourtUseCase.State.Final.Error.CourtReservationFailed,
-                ReserveCourtUseCase.State.Final.Error.FailedToFetchSchedule,
-                ReserveCourtUseCase.State.Final.Error.InvalidNumberOfAdditionalPlayers,
-                ReserveCourtUseCase.State.Final.Error.NoTimeslotAvailable,
-                ReserveCourtUseCase.State.Final.Error.PasswordNotFound,
-                -> error("Failed to reserve court.")
-            }
         }
 
     private inline fun <reified SERIAL> CloudEvent.decodeToSerial(): SERIAL =

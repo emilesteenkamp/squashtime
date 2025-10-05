@@ -3,7 +3,7 @@ plugins {
 }
 
 dependencies {
-    api(projects.squashtime.orktestrator)
+    api(libs.emilesteenkamp.orktstrator.core)
 
     implementation(libs.kotlininject.runtime)
     implementation(libs.kotlinlogging)

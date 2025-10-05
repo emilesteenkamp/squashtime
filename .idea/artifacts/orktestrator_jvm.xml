@@ -1,0 +1,8 @@
+<component name="ArtifactManager">
+  <artifact type="jar" name="orktestrator-jvm">
+    <output-path>$PROJECT_DIR$/squashtime/orktestrator/build/libs</output-path>
+    <root id="archive" name="orktestrator-jvm.jar">
+      <element id="module-output" name="squashtime-root.squashtime.orktestrator.jvmMain" />
+    </root>
+  </artifact>
+</component>

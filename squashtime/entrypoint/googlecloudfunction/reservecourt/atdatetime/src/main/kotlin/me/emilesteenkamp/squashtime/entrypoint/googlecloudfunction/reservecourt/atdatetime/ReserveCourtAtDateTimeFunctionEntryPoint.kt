@@ -6,13 +6,13 @@ import com.google.cloud.functions.HttpRequest
 import com.google.cloud.functions.HttpResponse
 import io.cloudevents.CloudEvent
 import io.github.oshai.kotlinlogging.KotlinLogging
+import java.time.LocalDateTime
 import kotlinx.coroutines.runBlocking
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json
 import me.emilesteenkamp.squashtime.application.domain.Player
 import me.emilesteenkamp.squashtime.application.usecase.ReserveCourtUseCase
 import me.emilesteenkamp.squashtime.infrastructure.main.infrastructure
-import java.time.LocalDateTime
 
 @Suppress("Unused")
 class ReserveCourtAtDateTimeFunctionEntryPoint :
@@ -29,14 +29,38 @@ class ReserveCourtFunction(
     override fun service(
         request: HttpRequest,
         response: HttpResponse,
-    ) = runBlocking {
+    ): Unit = runBlocking {
         val reserveCourtRequestSerial = request.decodeToSerial<ReserveCourtRequestSerial>()
 
         logger.info { "Accepted request with serial $reserveCourtRequestSerial" }
 
-        when (
+        reserveCourtUseCase.invoke(
+            ReserveCourtUseCase.Input(
+                player = reserveCourtRequestSerial.player.toPlayer(),
+                additionalPlayerIdentifierSet =
+                    reserveCourtRequestSerial.additionalPlayerIdentifierList
+                        .map {
+                            Player.Identifier(
+                                it,
+                            )
+                        }.toSet(),
+                requestedDateTime = reserveCourtRequestSerial.dateTime.toLocalDateTime(),
+            ),
+        )
+
+        response.setStatusCode(200)
+    }
+
+    private inline fun <reified SERIAL> HttpRequest.decodeToSerial(): SERIAL = reader.readText().let { json.decodeFromString<SERIAL>(it) }
+
+    override fun accept(event: CloudEvent): Unit =
+        runBlocking {
+            val reserveCourtRequestSerial = event.decodeToSerial<ReserveCourtRequestSerial>()
+
+            logger.info { "Accepted event with serial $reserveCourtRequestSerial" }
+
             reserveCourtUseCase.invoke(
-                ReserveCourtUseCase.State.Transient(
+                ReserveCourtUseCase.Input(
                     player = reserveCourtRequestSerial.player.toPlayer(),
                     additionalPlayerIdentifierSet =
                         reserveCourtRequestSerial.additionalPlayerIdentifierList
@@ -48,50 +72,6 @@ class ReserveCourtFunction(
                     requestedDateTime = reserveCourtRequestSerial.dateTime.toLocalDateTime(),
                 ),
             )
-        ) {
-            is ReserveCourtUseCase.State.Final.Success -> response.setStatusCode(200)
-            ReserveCourtUseCase.State.Final.Error.AuthenticationFailed,
-            ReserveCourtUseCase.State.Final.Error.CourtReservationFailed,
-            ReserveCourtUseCase.State.Final.Error.FailedToFetchSchedule,
-            ReserveCourtUseCase.State.Final.Error.InvalidNumberOfAdditionalPlayers,
-            ReserveCourtUseCase.State.Final.Error.NoTimeslotAvailable,
-            ReserveCourtUseCase.State.Final.Error.PasswordNotFound,
-            -> response.setStatusCode(400)
-        }
-    }
-
-    private inline fun <reified SERIAL> HttpRequest.decodeToSerial(): SERIAL = reader.readText().let { json.decodeFromString<SERIAL>(it) }
-
-    override fun accept(event: CloudEvent) =
-        runBlocking {
-            val reserveCourtRequestSerial = event.decodeToSerial<ReserveCourtRequestSerial>()
-
-            logger.info { "Accepted event with serial $reserveCourtRequestSerial" }
-
-            when (
-                reserveCourtUseCase.invoke(
-                    ReserveCourtUseCase.State.Transient(
-                        player = reserveCourtRequestSerial.player.toPlayer(),
-                        additionalPlayerIdentifierSet =
-                            reserveCourtRequestSerial.additionalPlayerIdentifierList
-                                .map {
-                                    Player.Identifier(
-                                        it,
-                                    )
-                                }.toSet(),
-                        requestedDateTime = reserveCourtRequestSerial.dateTime.toLocalDateTime(),
-                    ),
-                )
-            ) {
-                is ReserveCourtUseCase.State.Final.Success -> {}
-                ReserveCourtUseCase.State.Final.Error.AuthenticationFailed,
-                ReserveCourtUseCase.State.Final.Error.CourtReservationFailed,
-                ReserveCourtUseCase.State.Final.Error.FailedToFetchSchedule,
-                ReserveCourtUseCase.State.Final.Error.InvalidNumberOfAdditionalPlayers,
-                ReserveCourtUseCase.State.Final.Error.NoTimeslotAvailable,
-                ReserveCourtUseCase.State.Final.Error.PasswordNotFound,
-                -> error("Failed to reserve court.")
-            }
         }
 
     private inline fun <reified SERIAL> CloudEvent.decodeToSerial(): SERIAL =

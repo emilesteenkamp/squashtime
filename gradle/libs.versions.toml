@@ -1,4 +1,5 @@
 [versions]
+emilesteenkamp-orktstrator = "0.0.0-SNAPSHOT-2"
 google-cloud-function-framework-api = "1.1.4"
 google-cloud-function-invoker = "1.4.1"
 google-cloud-jib = "3.4.2"
@@ -16,6 +17,7 @@ skrapeit = "1.2.2"
 slf4j = "2.0.17"
 
 [libraries]
+emilesteenkamp-orktstrator-core = { module = "me.emilesteenkamp:orktstrator-core", version.ref = "emilesteenkamp-orktstrator" }
 google-cloud-function-framework-api = { module = "com.google.cloud.functions:functions-framework-api", version.ref = "google-cloud-function-framework-api" }
 google-cloud-function-invoker = { module = "com.google.cloud.functions.invoker:java-function-invoker", version.ref = "google-cloud-function-invoker" }
 kaml = { module = "com.charleskorn.kaml:kaml", version.ref = "kaml" }

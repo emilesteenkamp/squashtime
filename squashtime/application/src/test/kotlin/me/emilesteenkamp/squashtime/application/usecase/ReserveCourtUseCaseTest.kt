@@ -1,15 +1,15 @@
 package me.emilesteenkamp.squashtime.application.usecase
 
+import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.matchers.nulls.shouldNotBeNull
 import io.kotest.matchers.shouldBe
-import io.kotest.matchers.types.shouldBeInstanceOf
+import java.time.LocalDate
+import kotlin.uuid.ExperimentalUuidApi
+import kotlin.uuid.Uuid
 import me.emilesteenkamp.squashtime.application.domain.Player
 import me.emilesteenkamp.squashtime.application.domain.Timeslot
 import me.emilesteenkamp.squashtime.infrstructure.test.api.runWithTestInfrastructure
 import org.junit.Test
-import java.time.LocalDate
-import kotlin.uuid.ExperimentalUuidApi
-import kotlin.uuid.Uuid
 
 @OptIn(ExperimentalUuidApi::class)
 class ReserveCourtUseCaseTest {
@@ -18,7 +18,7 @@ class ReserveCourtUseCaseTest {
         runWithTestInfrastructure {
             // Given.
             val input =
-                ReserveCourtUseCase.State.Transient(
+                ReserveCourtUseCase.Input(
                     player =
                         Player(
                             identifier = Player.Identifier(Uuid.random().toHexString()),
@@ -36,10 +36,9 @@ class ReserveCourtUseCaseTest {
             val output = reserveCourtUseCase(input)
 
             // Then.
-            val success = output.shouldBeInstanceOf<ReserveCourtUseCase.State.Final.Success>()
             mockCourtReservationPlatformDataSource
                 .dateToMutableScheduleMap[input.requestedDateTime.toLocalDate()]
-                .shouldNotBeNull()[success.bookedCourtIdentifier]
+                .shouldNotBeNull()[output.bookedCourtIdentifier]
                 .shouldNotBeNull()
                 .find { it.time.compareTo(input.requestedDateTime.toLocalTime()) == 0 }
                 .shouldNotBeNull()
@@ -52,7 +51,7 @@ class ReserveCourtUseCaseTest {
         runWithTestInfrastructure {
             // Given.
             val input =
-                ReserveCourtUseCase.State.Transient(
+                ReserveCourtUseCase.Input(
                     player =
                         Player(
                             identifier = Player.Identifier(Uuid.random().toHexString()),
@@ -74,11 +73,12 @@ class ReserveCourtUseCaseTest {
                     }
                 }
 
-            // When.
-            val output = reserveCourtUseCase(input)
 
             // Then.
-            output.shouldBeInstanceOf<ReserveCourtUseCase.State.Final.Error.NoTimeslotAvailable>()
+            shouldThrow<IllegalStateException> {
+                // When.
+                reserveCourtUseCase(input)
+            }
         }
 
     @Test
@@ -86,7 +86,7 @@ class ReserveCourtUseCaseTest {
         runWithTestInfrastructure {
             // Given.
             val input =
-                ReserveCourtUseCase.State.Transient(
+                ReserveCourtUseCase.Input(
                     player =
                         Player(
                             identifier = Player.Identifier(Uuid.random().toHexString()),
@@ -100,10 +100,10 @@ class ReserveCourtUseCaseTest {
                             .atTime(/* hour = */ 14, /* minute = */ 0),
                 )
 
-            // When.
-            val output = reserveCourtUseCase(input)
-
             // Then.
-            output.shouldBeInstanceOf<ReserveCourtUseCase.State.Final.Error.PasswordNotFound>()
+            shouldThrow<IllegalStateException> {
+                // When.
+                reserveCourtUseCase(input)
+            }
         }
 }

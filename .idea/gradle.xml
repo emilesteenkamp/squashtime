@@ -21,11 +21,11 @@
             <option value="$PROJECT_DIR$/squashtime/infrastructure/scope" />
             <option value="$PROJECT_DIR$/squashtime/infrastructure/scope/testscoped" />
             <option value="$PROJECT_DIR$/squashtime/infrastructure/test" />
+            <option value="$PROJECT_DIR$/squashtime/orktestrator" />
             <option value="$PROJECT_DIR$/squashtime/peripheral" />
             <option value="$PROJECT_DIR$/squashtime/peripheral/filesystem" />
             <option value="$PROJECT_DIR$/squashtime/peripheral/mock" />
             <option value="$PROJECT_DIR$/squashtime/peripheral/squashcity" />
-            <option value="$PROJECT_DIR$/squashtime/workflow" />
           </set>
         </option>
       </GradleProjectSettings>
