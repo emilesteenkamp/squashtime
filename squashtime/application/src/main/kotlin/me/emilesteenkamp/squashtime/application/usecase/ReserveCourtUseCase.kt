@@ -166,13 +166,13 @@ class ReserveCourtUseCase
     }
 
     override fun toOutput(finalisedState: UseCaseState.Final): Output = when (finalisedState) {
-        is UseCaseState.Final.Success -> Output(bookedCourtIdentifier = finalisedState.bookedCourtIdentifier)
-        UseCaseState.Final.Error.AuthenticationFailed -> error("Court reservation platform authentication failed.")
-        UseCaseState.Final.Error.CourtReservationFailed -> error("Court reservation failed.")
-        UseCaseState.Final.Error.FailedToFetchSchedule -> error("Failed to fetch schedule.")
-        UseCaseState.Final.Error.InvalidNumberOfAdditionalPlayers -> error("Invalid number of additional players.")
-        UseCaseState.Final.Error.NoTimeslotAvailable -> error("No timeslot available.")
-        UseCaseState.Final.Error.PasswordNotFound -> error("Password not found.")
+        is UseCaseState.Final.Success -> Output.Success(bookedCourtIdentifier = finalisedState.bookedCourtIdentifier)
+        UseCaseState.Final.Error.InvalidNumberOfAdditionalPlayers -> Output.Failure.InvalidNumberOfAdditionalPlayers
+        UseCaseState.Final.Error.PasswordNotFound -> Output.Failure.PasswordNotFound
+        UseCaseState.Final.Error.NoTimeslotAvailable -> Output.Failure.NoTimeslotAvailable
+        UseCaseState.Final.Error.AuthenticationFailed -> Output.Failure.AuthenticationFailed
+        UseCaseState.Final.Error.FailedToFetchSchedule -> Output.Failure.FailedToFetchSchedule
+        UseCaseState.Final.Error.CourtReservationFailed -> Output.Failure.CourtReservationFailed
     }
 
     data class Input(
@@ -181,9 +181,25 @@ class ReserveCourtUseCase
         val requestedDateTime: LocalDateTime,
     )
 
-    data class Output(
-        val bookedCourtIdentifier: CourtIdentifier
-    )
+    sealed interface Output {
+        data class Success(
+            val bookedCourtIdentifier: CourtIdentifier,
+        ) : Output
+
+        sealed interface Failure : Output {
+            data object InvalidNumberOfAdditionalPlayers : Failure
+
+            data object PasswordNotFound : Failure
+
+            data object NoTimeslotAvailable : Failure
+
+            data object AuthenticationFailed : Failure
+
+            data object FailedToFetchSchedule : Failure
+
+            data object CourtReservationFailed : Failure
+        }
+    }
 
     object UseCaseState {
             data class Transient(

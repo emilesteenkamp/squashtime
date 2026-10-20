@@ -1,8 +1,8 @@
 package me.emilesteenkamp.squashtime.application.usecase
 
-import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.matchers.nulls.shouldNotBeNull
 import io.kotest.matchers.shouldBe
+import io.kotest.matchers.types.shouldBeInstanceOf
 import java.time.LocalDate
 import kotlin.uuid.ExperimentalUuidApi
 import kotlin.uuid.Uuid
@@ -36,6 +36,7 @@ class ReserveCourtUseCaseTest {
             val output = reserveCourtUseCase(input)
 
             // Then.
+            output.shouldBeInstanceOf<ReserveCourtUseCase.Output.Success>()
             mockCourtReservationPlatformDataSource
                 .dateToMutableScheduleMap[input.requestedDateTime.toLocalDate()]
                 .shouldNotBeNull()[output.bookedCourtIdentifier]
@@ -74,11 +75,11 @@ class ReserveCourtUseCaseTest {
                 }
 
 
+            // When.
+            val output = reserveCourtUseCase(input)
+
             // Then.
-            shouldThrow<IllegalStateException> {
-                // When.
-                reserveCourtUseCase(input)
-            }
+            output.shouldBe(ReserveCourtUseCase.Output.Failure.NoTimeslotAvailable)
         }
 
     @Test
@@ -100,10 +101,10 @@ class ReserveCourtUseCaseTest {
                             .atTime(/* hour = */ 14, /* minute = */ 0),
                 )
 
+            // When.
+            val output = reserveCourtUseCase(input)
+
             // Then.
-            shouldThrow<IllegalStateException> {
-                // When.
-                reserveCourtUseCase(input)
-            }
+            output.shouldBe(ReserveCourtUseCase.Output.Failure.PasswordNotFound)
         }
 }

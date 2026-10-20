@@ -17,7 +17,7 @@ dependencies {
     implementation(libs.ktor.client.logging)
     implementation(libs.ktor.client.okhttp)
     implementation(libs.skrapeit)
-    implementation(libs.slf4j.simple)
+    implementation(libs.logback.classic)
 
     ksp(libs.kotlininject.compiler.ksp)
 }
